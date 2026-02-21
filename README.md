@@ -1,36 +1,51 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Epic Tributes - Portal de Conciertos
 
-## Getting Started
+Esta es la plataforma web desarrollada para la promoción de conciertos de grupos tributo (Meccano, El Señor de los Anillos, Harry Potter, etc.). 
 
-First, run the development server:
+El proyecto proporciona tanto un portal público para que los usuarios vean las bandas y compren entradas, como un panel de administración privado para gestionar la base de datos de grupos, salas y eventos.
 
+## Características
+
+- **Portal Público**:
+  - **Inicio**: Página de presentación con diseño *premium* y animaciones.
+  - **Grupos**: Lista de todas las bandas tributo promocionadas.
+  - **Conciertos**: Calendario de próximos eventos con enlaces de compra.
+  - **Contacto**: Formulario para que nuevas bandas o salas se pongan en contacto.
+- **Panel del Promotor (`/dashboard`)**:
+  - Interfaz privada (sin necesidad de código) para añadir nuevas Bandas.
+  - Interfaz para registrar Salas de conciertos.
+  - Sistema para programar nuevos Conciertos vinculando banda y sala.
+- **Base de Datos Local**:
+  - Utiliza SQLite (`promoter.db`), lo que significa que todos los datos se guardan en un único archivo dentro de este mismo proyecto, facilitando enormemente las copias de seguridad.
+
+## Tecnologías Utilizadas
+
+- **Frontend & Backend**: Next.js (App Router)
+- **Base de Datos**: SQLite (mediante `better-sqlite3`)
+- **Estilos**: Vanilla CSS (`globals.css`) con diseño oscuro "Glassmorphism" y sin dependencias pesadas.
+
+## Instrucciones de Instalación y Uso
+
+Para ejecutar este proyecto en tu ordenador, sigue estos pasos:
+
+### 1. Requisitos Previos
+Asegúrate de tener instalado [Node.js](https://nodejs.org/) en tu ordenador.
+
+### 2. Abrir el proyecto
+Abre una terminal (Símbolo del sistema o PowerShell) y navega hasta la carpeta del proyecto:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+cd "c:\Users\javip\Documents\Python Scripts\promoter-web"
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 3. Iniciar el servidor de desarrollo
+Ejecuta el siguiente comando para encender la página web:
+```bash
+npm run dev
+```
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+### 4. Ver la página
+Una vez que el comando anterior esté funcionando, abre tu navegador web (Chrome, Firefox, Edge, etc.) y visita:
+- **Web principal:** [http://localhost:3000](http://localhost:3000)
+- **Panel de control:** [http://localhost:3000/dashboard](http://localhost:3000/dashboard)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+*Nota: La primera vez que entres a la web, el archivo de la base de datos (`promoter.db`) se creará automáticamente junto con todas sus tablas.*
