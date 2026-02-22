@@ -2,32 +2,29 @@
 
 Esta plataforma web promociona conciertos tributo con un diseño premium y panel de administración incorporado. La aplicación acaba de ser adaptada para poder desplegarse de manera gratuita y eficiente en **Vercel** utilizando **Turso** como base de datos en la nube.
 
-## Cómo Desplegar en Vercel y Turso
+## Cómo Desplegar en Vercel y Turso (Gratis)
 
-Vercel no permite bases de datos SQLite locales ya que su entorno Serverless borra archivos con cada ejecución. Por ello, el código usa ahora `@libsql/client`, lo que permite funcionar con un archivo local durante el desarrollo y con la nube de Turso de cara al público.
+Vercel no permite bases de datos locales ya que su entorno Serverless borra archivos con cada ejecución. Por ello, el código usa ahora `@libsql/client`, lo que permite funcionar con un archivo local durante el desarrollo y con la nube de Turso de cara al público.
 
-### Pasos a seguir:
+### Paso 1: Obtener la Base de Datos en Turso
+1. Entra en [turso.tech](https://turso.tech/) y regístrate con tu cuenta de GitHub.
+2. Crea una nueva base de datos (por ejemplo, llámala `promoter-db`).
+3. En el panel de tu nueva base de datos, haz clic en **"Generate Token"** (o "Create Token") y cópialo.
+4. También copia la URL de la base de datos (se parece a `libsql://promoter-db-tuusuario.turso.io`).
 
-1. **Crear base de datos en Turso:**
-   - Ve a [Turso](https://turso.tech/) y crea una cuenta gratuita.
-   - Crea una nueva base de datos (por ejemplo, `promoter-db`).
-   - Obtén la URL de tu base de datos y un "Auth Token".
+### Paso 2: Subir el código a GitHub
+Asegúrate de haber subido todo tu código a un repositorio público o privado en tu cuenta de GitHub. (Ej. `https://github.com/tu-usuario/Cayetano-Piazza-web`).
 
-2. **Subir a GitHub:**
-   - Crea un repositorio vacío en [GitHub](https://github.com/).
-   - Abre la terminal en esta carpeta y asocia tu código al nuevo repositorio:
-     ```bash
-     git remote add origin https://github.com/tu-usuario/nombre-del-repo.git
-     git push -u origin main
-     ```
+### Paso 3: Desplegar en Vercel
+1. Entra en [Vercel](https://vercel.com/) y regístrate también con tu cuenta de GitHub.
+2. Haz clic en el botón **"Add New"** > **"Project"**.
+3. Verás una lista con tus repositorios de GitHub. Busca el tuyo (ej. `Cayetano-Piazza-web`) y dale a **"Import"**.
+4. Antes de darle a "Deploy", baja hasta la sección que dice **"Environment Variables"** (Variables de entorno) y añade estas dos variables exactas que sacaste del Paso 1:
+   - Nombre: `TURSO_DATABASE_URL` | Valor: *(Pega aquí la URL de Turso, por ejemplo: libsql://...)*
+   - Nombre: `TURSO_AUTH_TOKEN` | Valor: *(Pega aquí el token kilométrico de Turso)*
+5. Dale al botón azul **"Deploy"**.
 
-3. **Desplegar en Vercel:**
-   - Ve a [Vercel](https://vercel.com/) y entra con tu cuenta de GitHub.
-   - Dale a "Add New Project" y selecciona el repositorio de GitHub que acabas de crear.
-   - En la sección **Environment Variables** (variables de entorno), añade estas dos:
-     - `TURSO_DATABASE_URL`: (La URL que te ha dado Turso, empezando por `libsql://...`)
-     - `TURSO_AUTH_TOKEN`: (El token largo que has sacado de Turso)
-   - Pulsa "Deploy" y ¡listo! En segundos, tu web será accesible mundialmente a través de la URL que te proporciona Vercel.
+En menos de un par de minutos verás un mensaje de éxito y un dominio tipo `cayetano-piazza-web.vercel.app`. ¡Y tu página web ya será accesible para todo el mundo! 🚀
 
 ## Desarrollo Local
 
