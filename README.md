@@ -1,51 +1,40 @@
 # Epic Tributes - Portal de Conciertos
 
-Esta es la plataforma web desarrollada para la promoción de conciertos de grupos tributo (Meccano, El Señor de los Anillos, Harry Potter, etc.). 
+Esta plataforma web promociona conciertos tributo con un diseño premium y panel de administración incorporado. La aplicación acaba de ser adaptada para poder desplegarse de manera gratuita y eficiente en **Vercel** utilizando **Turso** como base de datos en la nube.
 
-El proyecto proporciona tanto un portal público para que los usuarios vean las bandas y compren entradas, como un panel de administración privado para gestionar la base de datos de grupos, salas y eventos.
+## Cómo Desplegar en Vercel y Turso
 
-## Características
+Vercel no permite bases de datos SQLite locales ya que su entorno Serverless borra archivos con cada ejecución. Por ello, el código usa ahora `@libsql/client`, lo que permite funcionar con un archivo local durante el desarrollo y con la nube de Turso de cara al público.
 
-- **Portal Público**:
-  - **Inicio**: Página de presentación con diseño *premium* y animaciones.
-  - **Grupos**: Lista de todas las bandas tributo promocionadas.
-  - **Conciertos**: Calendario de próximos eventos con enlaces de compra.
-  - **Contacto**: Formulario para que nuevas bandas o salas se pongan en contacto.
-- **Panel del Promotor (`/dashboard`)**:
-  - Interfaz privada (sin necesidad de código) para añadir nuevas Bandas.
-  - Interfaz para registrar Salas de conciertos.
-  - Sistema para programar nuevos Conciertos vinculando banda y sala.
-- **Base de Datos Local**:
-  - Utiliza SQLite (`promoter.db`), lo que significa que todos los datos se guardan en un único archivo dentro de este mismo proyecto, facilitando enormemente las copias de seguridad.
+### Pasos a seguir:
 
-## Tecnologías Utilizadas
+1. **Crear base de datos en Turso:**
+   - Ve a [Turso](https://turso.tech/) y crea una cuenta gratuita.
+   - Crea una nueva base de datos (por ejemplo, `promoter-db`).
+   - Obtén la URL de tu base de datos y un "Auth Token".
 
-- **Frontend & Backend**: Next.js (App Router)
-- **Base de Datos**: SQLite (mediante `better-sqlite3`)
-- **Estilos**: Vanilla CSS (`globals.css`) con diseño oscuro "Glassmorphism" y sin dependencias pesadas.
+2. **Subir a GitHub:**
+   - Crea un repositorio vacío en [GitHub](https://github.com/).
+   - Abre la terminal en esta carpeta y asocia tu código al nuevo repositorio:
+     ```bash
+     git remote add origin https://github.com/tu-usuario/nombre-del-repo.git
+     git push -u origin main
+     ```
 
-## Instrucciones de Instalación y Uso
+3. **Desplegar en Vercel:**
+   - Ve a [Vercel](https://vercel.com/) y entra con tu cuenta de GitHub.
+   - Dale a "Add New Project" y selecciona el repositorio de GitHub que acabas de crear.
+   - En la sección **Environment Variables** (variables de entorno), añade estas dos:
+     - `TURSO_DATABASE_URL`: (La URL que te ha dado Turso, empezando por `libsql://...`)
+     - `TURSO_AUTH_TOKEN`: (El token largo que has sacado de Turso)
+   - Pulsa "Deploy" y ¡listo! En segundos, tu web será accesible mundialmente a través de la URL que te proporciona Vercel.
 
-Para ejecutar este proyecto en tu ordenador, sigue estos pasos:
+## Desarrollo Local
 
-### 1. Requisitos Previos
-Asegúrate de tener instalado [Node.js](https://nodejs.org/) en tu ordenador.
+Si quieres seguir desarrollando o probando la web de manera local en tu ordenador:
 
-### 2. Abrir el proyecto
-Abre una terminal (Símbolo del sistema o PowerShell) y navega hasta la carpeta del proyecto:
-```bash
-cd "c:\Users\javip\Documents\Python Scripts\promoter-web"
-```
-
-### 3. Iniciar el servidor de desarrollo
-Ejecuta el siguiente comando para encender la página web:
-```bash
-npm run dev
-```
-
-### 4. Ver la página
-Una vez que el comando anterior esté funcionando, abre tu navegador web (Chrome, Firefox, Edge, etc.) y visita:
-- **Web principal:** [http://localhost:3000](http://localhost:3000)
-- **Panel de control:** [http://localhost:3000/dashboard](http://localhost:3000/dashboard)
-
-*Nota: La primera vez que entres a la web, el archivo de la base de datos (`promoter.db`) se creará automáticamente junto con todas sus tablas.*
+1. Abre una terminal en esta carpeta y arranca el servidor local:
+   ```bash
+   npm run dev
+   ```
+2. Entra en `http://localhost:3000`. Al no detectar las variables de entorno de Turso, la web creará y utilizará automáticamente el archivo local `promoter.db` para poder funcionar de forma offline.
