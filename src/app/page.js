@@ -117,6 +117,29 @@ export default function Home() {
         </div>
       </section>
 
+      {/* VIDEO SECTION */}
+      <section className="video-section">
+        <video
+          className="video-bg"
+          autoPlay
+          muted
+          loop
+          playsInline
+        >
+          <source src="/img/concierto12.mp4" type="video/mp4" />
+          <source src="/img/concierto9.mp4" type="video/mp4" />
+          <source src="/img/concierto11.mp4" type="video/mp4" />
+          <source src="/img/concierto10.mp4" type="video/mp4" />
+        </video>
+        <div className="video-overlay"></div>
+        <div className="video-content">
+          <p className="video-kicker">Gloria en cada nota</p>
+          <h2 className="video-title">Una experiencia que<br />no olvidarás</h2>
+          <p className="video-body">Más de 500 asistentes han vivido la magia de Glory Nights.<br />Únete a ellos y descubre los conciertos que están marcando la diferencia.</p>
+          <a href="/concerts" className="btn-primary video-cta">Ver próximas fechas</a>
+        </div>
+      </section>
+
       <section className="faq-section">
         <div className="section-header">
           <h2>Preguntas Frecuentes</h2>
@@ -506,6 +529,101 @@ export default function Home() {
           transform: scale(1.02);
           filter: brightness(1.05);
           box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+        /* Video Section */
+        .video-section {
+          position: relative;
+          width: 100%;
+          min-height: 85vh;
+          overflow: hidden;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: #000;
+        }
+
+        .video-bg {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          min-width: 100%;
+          min-height: 100%;
+          width: auto;
+          height: auto;
+          object-fit: cover;
+          z-index: 0;
+          opacity: 0.7;
+        }
+
+        .video-overlay {
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(
+            to bottom,
+            rgba(0,0,0,0.35) 0%,
+            rgba(0,0,0,0.55) 50%,
+            rgba(0,0,0,0.75) 100%
+          );
+          z-index: 1;
+        }
+
+        .video-content {
+          position: relative;
+          z-index: 2;
+          text-align: center;
+          max-width: 800px;
+          padding: 80px 30px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 24px;
+        }
+
+        .video-kicker {
+          font-family: 'Crimson Text', serif;
+          font-size: 0.9rem;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 5px;
+          color: #C5A059;
+        }
+
+        .video-title {
+          font-family: 'Playfair Display', serif;
+          font-size: 3.8rem;
+          font-weight: 700;
+          color: #FFFFFF;
+          line-height: 1.2;
+          letter-spacing: -0.5px;
+          margin: 0;
+          text-shadow: 0 4px 30px rgba(0,0,0,0.5);
+        }
+
+        .video-body {
+          font-family: 'Crimson Text', serif;
+          font-size: 1.2rem;
+          color: rgba(255,255,255,0.85);
+          line-height: 1.8;
+          font-weight: 400;
+          max-width: 600px;
+        }
+
+        .video-cta {
+          margin-top: 10px;
+        }
+
+        @media (max-width: 768px) {
+          .video-title {
+            font-size: 2.4rem;
+          }
+          .video-body {
+            font-size: 1.05rem;
+          }
+          .video-section {
+            min-height: 70vh;
+          }
         }
 
         /* FAQ Section */
