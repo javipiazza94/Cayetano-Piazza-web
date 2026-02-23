@@ -10,9 +10,12 @@ export default function RootLayout({ children }) {
     <html lang="es">
       <body>
         <nav className="navbar">
-          <a href="/" className="css-logo" style={{ textDecoration: 'none' }}>
-            <span className="glory">Glory</span>
-            <span className="nights">Nights</span>
+          <a href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
+            <img
+              src="/img/GLORY NIGHTS LOGO.jpeg"
+              alt="Glory Nights"
+              className="navbar-logo-img"
+            />
           </a>
           <div className="nav-links">
             <a href="/">Conciertos</a>
