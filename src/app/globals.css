@@ -217,3 +217,122 @@ a {
 .nav-links a:hover::after {
   width: 100%;
 }
+
+/* ── Hamburger Button ── */
+.nav-hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 6px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  z-index: 1100;
+}
+
+.nav-hamburger span {
+  display: block;
+  width: 26px;
+  height: 2px;
+  background: #FFFFFF;
+  border-radius: 2px;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  transform-origin: center;
+}
+
+/* Animate to X when open */
+.nav-hamburger.is-open span:nth-child(1) {
+  transform: translateY(8px) rotate(45deg);
+}
+
+.nav-hamburger.is-open span:nth-child(2) {
+  opacity: 0;
+  transform: scaleX(0);
+}
+
+.nav-hamburger.is-open span:nth-child(3) {
+  transform: translateY(-8px) rotate(-45deg);
+}
+
+/* ── Mobile Overlay Menu ── */
+.nav-mobile-menu {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 1050;
+  background: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.nav-mobile-menu.is-open {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.nav-mobile-links {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: rgba(10, 10, 10, 0.98);
+  padding: 120px 40px 60px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transform: translateY(-100%);
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border-bottom: 1px solid rgba(197, 160, 89, 0.25);
+}
+
+.nav-mobile-menu.is-open .nav-mobile-links {
+  transform: translateY(0);
+}
+
+.nav-mobile-links a {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem;
+  font-weight: 600;
+  color: #FFFFFF;
+  text-decoration: none;
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  transition: color 0.2s ease, padding-left 0.2s ease;
+}
+
+.nav-mobile-links a:last-child {
+  border-bottom: none;
+}
+
+.nav-mobile-links a:hover {
+  color: #C5A059;
+  padding-left: 8px;
+}
+
+/* ── Responsive Breakpoints ── */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 14px 5%;
+    min-height: 80px;
+  }
+
+  .navbar-logo-img {
+    height: 60px;
+  }
+
+  /* Hide desktop links */
+  .nav-links {
+    display: none;
+  }
+
+  /* Show hamburger */
+  .nav-hamburger {
+    display: flex;
+  }
+
+  /* Show mobile menu container */
+  .nav-mobile-menu {
+    display: block;
+  }
+}
