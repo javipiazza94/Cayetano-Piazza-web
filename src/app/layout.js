@@ -1,8 +1,8 @@
 import './globals.css';
 
 export const metadata = {
-  title: 'Epic Tributes | Conciertos de Película',
-  description: 'Promovemos los mejores grupos de versiones de Meccano, El Señor de los Anillos y Harry Potter.',
+  title: 'Glory Nights | Conciertos bajo una nueva luz',
+  description: 'Descubre los mejores conciertos tributo en una atmósfera íntima y mágica.',
 };
 
 export default function RootLayout({ children }) {
@@ -10,11 +10,14 @@ export default function RootLayout({ children }) {
     <html lang="es">
       <body>
         <nav className="navbar">
-          <h2>Epic Tributes</h2>
+          <a href="/" className="css-logo" style={{ textDecoration: 'none' }}>
+            <span className="glory">Glory</span>
+            <span className="nights">Nights</span>
+          </a>
           <div className="nav-links">
-            <a href="/">Inicio</a>
-            <a href="/bands">Grupos</a>
-            <a href="/concerts">Conciertos</a>
+            <a href="/">Conciertos</a>
+            <a href="/bands">Artistas</a>
+            <a href="/venues">Espacios</a>
             <a href="/contact">Contacto</a>
           </div>
         </nav>

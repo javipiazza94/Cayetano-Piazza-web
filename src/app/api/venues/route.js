@@ -12,10 +12,10 @@ export async function GET() {
 
 export async function POST(request) {
     try {
-        const { name, location, capacity, contactEmail } = await request.json();
+        const { name, location, capacity, contactEmail, imageUrl } = await request.json();
         const result = await client.execute({
-            sql: 'INSERT INTO venues (name, location, capacity, contactEmail) VALUES (?, ?, ?, ?)',
-            args: [name, location, capacity || null, contactEmail || null]
+            sql: 'INSERT INTO venues (name, location, capacity, contactEmail, imageUrl) VALUES (?, ?, ?, ?, ?)',
+            args: [name, location, capacity || null, contactEmail || null, imageUrl || null]
         });
 
         return NextResponse.json({ id: result.lastInsertRowid?.toString(), success: true }, { status: 201 });

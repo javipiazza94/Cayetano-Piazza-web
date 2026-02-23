@@ -9,8 +9,8 @@ export default function DashboardPage() {
     const [venues, setVenues] = useState([]);
 
     // Forms State
-    const [bandForm, setBandForm] = useState({ name: '', tributeTo: '', description: '' });
-    const [venueForm, setVenueForm] = useState({ name: '', location: '', capacity: '' });
+    const [bandForm, setBandForm] = useState({ name: '', tributeTo: '', description: '', imageUrl: '' });
+    const [venueForm, setVenueForm] = useState({ name: '', location: '', capacity: '', imageUrl: '' });
     const [concertForm, setConcertForm] = useState({ band_id: '', venue_id: '', date: '' });
 
     const fetchData = async () => {
@@ -67,6 +67,7 @@ export default function DashboardPage() {
                         <form onSubmit={(e) => handleEntitySubmit(e, 'Banda', '/api/bands', bandForm)} style={{ marginTop: '20px' }}>
                             <input style={inputStyle} type="text" placeholder="Nombre (ej. Mecano Revival)" required value={bandForm.name} onChange={e => setBandForm({ ...bandForm, name: e.target.value })} />
                             <input style={inputStyle} type="text" placeholder="Tributo a (ej. Meccano)" required value={bandForm.tributeTo} onChange={e => setBandForm({ ...bandForm, tributeTo: e.target.value })} />
+                            <input style={inputStyle} type="text" placeholder="URL de la imagen (opcional)" value={bandForm.imageUrl} onChange={e => setBandForm({ ...bandForm, imageUrl: e.target.value })} />
                             <textarea style={{ ...inputStyle, resize: 'vertical' }} rows="3" placeholder="Descripción" value={bandForm.description} onChange={e => setBandForm({ ...bandForm, description: e.target.value })}></textarea>
                             <button type="submit" className="btn-primary">Guardar Banda</button>
                         </form>
@@ -80,6 +81,7 @@ export default function DashboardPage() {
                             <input style={inputStyle} type="text" placeholder="Nombre de la Sala" required value={venueForm.name} onChange={e => setVenueForm({ ...venueForm, name: e.target.value })} />
                             <input style={inputStyle} type="text" placeholder="Ubicación" required value={venueForm.location} onChange={e => setVenueForm({ ...venueForm, location: e.target.value })} />
                             <input style={inputStyle} type="number" placeholder="Capacidad" required value={venueForm.capacity} onChange={e => setVenueForm({ ...venueForm, capacity: e.target.value })} />
+                            <input style={inputStyle} type="text" placeholder="URL de la imagen (opcional)" value={venueForm.imageUrl} onChange={e => setVenueForm({ ...venueForm, imageUrl: e.target.value })} />
                             <button type="submit" className="btn-primary">Guardar Sala</button>
                         </form>
                     </div>

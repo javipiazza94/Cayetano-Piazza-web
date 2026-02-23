@@ -54,6 +54,14 @@ async function initializeDatabase() {
       )
     `);
     console.log('Database schema ensured.');
+
+    // Migration logic
+    try {
+      await client.execute(`ALTER TABLE venues ADD COLUMN imageUrl TEXT`);
+      console.log('Added imageUrl to venues table.');
+    } catch (e) {
+      // Column might already exist
+    }
   } catch (error) {
     console.error('Failed to initialize database schema', error);
   }
