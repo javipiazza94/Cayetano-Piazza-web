@@ -58,10 +58,15 @@ async function initializeDatabase() {
     // Migration logic
     try {
       await client.execute(`ALTER TABLE venues ADD COLUMN imageUrl TEXT`);
-      console.log('Added imageUrl to venues table.');
-    } catch (e) {
-      // Column might already exist
-    }
+    } catch (e) { }
+
+    // Feature: Video URLs y Descripciones extra
+    try { await client.execute(`ALTER TABLE bands ADD COLUMN videoUrl TEXT`); } catch (e) { }
+    try { await client.execute(`ALTER TABLE venues ADD COLUMN videoUrl TEXT`); } catch (e) { }
+    try { await client.execute(`ALTER TABLE venues ADD COLUMN description TEXT`); } catch (e) { }
+    try { await client.execute(`ALTER TABLE concerts ADD COLUMN videoUrl TEXT`); } catch (e) { }
+    try { await client.execute(`ALTER TABLE concerts ADD COLUMN description TEXT`); } catch (e) { }
+    console.log('Migrations checked.');
   } catch (error) {
     console.error('Failed to initialize database schema', error);
   }

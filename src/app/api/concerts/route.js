@@ -20,14 +20,41 @@ export async function GET() {
 
 export async function POST(request) {
     try {
-        const { band_id, venue_id, date, ticketUrl } = await request.json();
+        const { band_id, venue_id, date, ticketUrl, videoUrl, description } = await request.json();
         const result = await client.execute({
-            sql: 'INSERT INTO concerts (band_id, venue_id, date, ticketUrl) VALUES (?, ?, ?, ?)',
-            args: [band_id, venue_id, date, ticketUrl || null]
+            sql: 'INSERT INTO concerts (band_id, venue_id, date, ticketUrl, videoUrl, description) VALUES (?, ?, ?, ?, ?, ?)',
+            args: [band_id, venue_id, date, ticketUrl || null, videoUrl || null, description || null]
         });
 
         return NextResponse.json({ id: result.lastInsertRowid?.toString(), success: true }, { status: 201 });
     } catch (error) {
         return NextResponse.json({ error: 'Failed to create concert' }, { status: 500 });
+    }
+}
+
+export async function PUT(request) {
+    try {
+        const { id, band_id, venue_id, date, ticketUrl, videoUrl, description } = await request.json();
+        await client.execute({
+            sql: 'UPDATE concerts SET band_id = ?, venue_id = ?, date = ?, ticketUrl = ?, videoUrl = ?, description = ? WHERE id = ?',
+            args: [band_id, venue_id, date, ticketUrl || null, videoUrl || null, description || null, id]
+        });
+        return NextResponse.json({ success: true });
+    } catch (error) {
+        return NextResponse.json({ error: 'Failed to update concert' }, { status: 500 });
+    }
+}
+
+export async function DELETE(request) {
+    try {
+        const url = new URL(request.url);
+        const id = url.searchParams.get('id');
+        await client.execute({
+            sql: 'DELETE FROM concerts WHERE id = ?',
+            args: [id]
+        });
+        return NextResponse.json({ success: true });
+    } catch (error) {
+        return NextResponse.json({ error: 'Failed to delete concert' }, { status: 500 });
     }
 }

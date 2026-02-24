@@ -31,8 +31,8 @@ export default function NavBar() {
 
             {/* Desktop links */}
             <div className="nav-links">
-                <a href="/">Conciertos</a>
-                <a href="/bands">Artistas</a>
+                <a href="/conciertos">Conciertos</a>
+                <a href="/artistas">Artistas</a>
                 <a href="/venues">Espacios</a>
                 <a href="/contact">Contacto</a>
             </div>
@@ -52,8 +52,8 @@ export default function NavBar() {
             {/* Mobile overlay menu */}
             <div className={`nav-mobile-menu${open ? ' is-open' : ''}`} onClick={() => setOpen(false)}>
                 <div className="nav-mobile-links" onClick={(e) => e.stopPropagation()}>
-                    <a href="/" onClick={() => setOpen(false)}>Conciertos</a>
-                    <a href="/bands" onClick={() => setOpen(false)}>Artistas</a>
+                    <a href="/conciertos" onClick={() => setOpen(false)}>Conciertos</a>
+                    <a href="/artistas" onClick={() => setOpen(false)}>Artistas</a>
                     <a href="/venues" onClick={() => setOpen(false)}>Espacios</a>
                     <a href="/contact" onClick={() => setOpen(false)}>Contacto</a>
                 </div>

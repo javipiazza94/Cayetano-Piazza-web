@@ -31,10 +31,10 @@ export default function Home() {
             </div>
             <div className="band-info">
               <span className="category">Pop / Clásico</span>
-              <h3>Conciertos de verano. </h3>
+              <h3>Conciertos de verano </h3>
               <p className="location">📍 Bodegas Hidaldo: LA GITANA, Sanlúcar de Barrameda</p>
               <div className="card-footer">
-                <span className="price">Desde 15,00 €</span>
+                <span className="price">Desde 25,00 €</span>
                 <span className="tickets-link">Ver entradas →</span>
               </div>
             </div>
@@ -51,7 +51,7 @@ export default function Home() {
               <h3>El Señor de los Anillos bajo las Estrellas</h3>
               <p className="location">📍 Teatro Gutiérrez de Alba, Alcalá de Guadaira</p>
               <div className="card-footer">
-                <span className="price">Desde 15,00 €</span>
+                <span className="price">Desde 25,00 €</span>
                 <span className="tickets-link">Ver entradas →</span>
               </div>
             </div>
@@ -250,7 +250,7 @@ export default function Home() {
         }
 
         .hero-kicker {
-          font-family: 'Crimson Text', serif;
+          font-family: var(--font-montserrat), sans-serif;
           font-weight: 500;
           letter-spacing: 4px;
           text-transform: uppercase;
@@ -260,15 +260,18 @@ export default function Home() {
         }
 
         .hero-title {
+          font-family: var(--font-playfair), serif;
           font-size: 4.5rem;
+          font-weight: 700;
           line-height: 1.1;
           margin-bottom: 30px;
           color: var(--text-primary);
           text-shadow: 0 4px 20px rgba(255,255,255,0.5);
+          letter-spacing: -1px;
         }
 
         .hero-subtitle {
-          font-family: 'Crimson Text', serif;
+          font-family: var(--font-montserrat), sans-serif;
           font-weight: 400;
           font-size: 1.25rem;
           color: var(--text-secondary);
@@ -286,7 +289,7 @@ export default function Home() {
         }
         
         .section-header h2 {
-          font-family: 'Playfair Display', serif;
+          font-family: var(--font-playfair), serif;
           font-size: 3.2rem;
           font-weight: 700;
           margin-bottom: 20px;
@@ -298,7 +301,7 @@ export default function Home() {
         .section-header p {
           color: #1A1A1A;
           font-size: 1.15rem;
-          font-family: 'Crimson Text', serif;
+          font-family: var(--font-montserrat), sans-serif;
           font-weight: 400;
           line-height: 1.8;
           max-width: 620px;
@@ -347,7 +350,8 @@ export default function Home() {
         }
 
         .band-img-placeholder {
-          height: 260px;
+          aspect-ratio: 3 / 4;
+          width: 100%;
           position: relative;
           transition: transform 0.6s ease;
         }
@@ -360,7 +364,7 @@ export default function Home() {
           border: none;
           color: #FFFFFF;
           padding: 8px 14px;
-          font-family: 'Crimson Text', serif;
+          font-family: var(--font-montserrat), sans-serif;
           font-size: 0.8rem;
           font-weight: 600;
           letter-spacing: 1px;
@@ -373,7 +377,7 @@ export default function Home() {
         }
 
         .category {
-          font-family: 'Crimson Text', serif;
+          font-family: var(--font-montserrat), sans-serif;
           font-size: 0.8rem;
           font-weight: 600;
           text-transform: uppercase;
@@ -384,7 +388,7 @@ export default function Home() {
         }
 
         .band-info h3 {
-          font-family: 'Playfair Display', serif;
+          font-family: var(--font-playfair), serif;
           font-size: 1.5rem;
           margin-bottom: 12px;
           color: #1A1A1A;
@@ -396,7 +400,7 @@ export default function Home() {
           color: #666666;
           font-size: 0.95rem;
           margin-bottom: 20px;
-          font-family: 'Crimson Text', serif;
+          font-family: var(--font-montserrat), sans-serif;
           display: flex;
           align-items: center;
           gap: 8px;
@@ -408,7 +412,7 @@ export default function Home() {
           align-items: center;
           border-top: 1px solid #eeeeee;
           padding-top: 18px;
-          font-family: 'Crimson Text', serif;
+          font-family: var(--font-montserrat), sans-serif;
         }
         
         .price {
@@ -437,7 +441,7 @@ export default function Home() {
           text-transform: lowercase;
           font-size: 0.85em;
           margin-left: 5px;
-          font-family: 'Playfair Display', serif;
+          font-family: var(--font-playfair), serif;
         }
 
         /* Reviews Section */
@@ -478,7 +482,7 @@ export default function Home() {
         }
 
         .review-text {
-          font-family: 'Crimson Text', serif;
+          font-family: var(--font-montserrat), sans-serif;
           font-style: italic;
           font-size: 1.15rem;
           color: #1A1A1A;
@@ -486,7 +490,7 @@ export default function Home() {
         }
 
         .review-author {
-          font-family: 'Crimson Text', serif;
+          font-family: var(--font-montserrat), sans-serif;
           font-size: 0.85rem;
           color: #888888;
           font-weight: 500;
@@ -582,7 +586,7 @@ export default function Home() {
         }
 
         .video-kicker {
-          font-family: 'Crimson Text', serif;
+          font-family: var(--font-montserrat), sans-serif;
           font-size: 0.9rem;
           font-weight: 600;
           text-transform: uppercase;
@@ -591,7 +595,7 @@ export default function Home() {
         }
 
         .video-title {
-          font-family: 'Playfair Display', serif;
+          font-family: var(--font-playfair), serif;
           font-size: 3.8rem;
           font-weight: 700;
           color: #FFFFFF;
@@ -602,7 +606,7 @@ export default function Home() {
         }
 
         .video-body {
-          font-family: 'Crimson Text', serif;
+          font-family: var(--font-montserrat), sans-serif;
           font-size: 1.2rem;
           color: rgba(255,255,255,0.85);
           line-height: 1.8;
@@ -658,7 +662,7 @@ export default function Home() {
         }
 
         .faq-item h3 {
-          font-family: 'Playfair Display', serif;
+          font-family: var(--font-playfair), serif;
           font-size: 1.3rem;
           margin-bottom: 14px;
           color: #1A1A1A;
@@ -667,7 +671,7 @@ export default function Home() {
 
         .faq-item p {
           color: #4d4b4bff;
-          font-family: 'Crimson Text', serif;
+          font-family: var(--font-montserrat), sans-serif;
           font-weight: 400;
           font-size: 1.05rem;
           line-height: 1.8;
@@ -717,9 +721,9 @@ export default function Home() {
         }
 
         .footer-heading {
-          font-family: 'Playfair Display', serif;
+          font-family: var(--font-playfair), serif;
           font-size: 1rem;
-          font-weight: 600;
+          font-weight: 700;
           text-transform: uppercase;
           letter-spacing: 3px;
           color: var(--accent);
@@ -727,7 +731,7 @@ export default function Home() {
         }
 
         .footer-text {
-          font-family: 'Crimson Text', serif;
+          font-family: var(--font-montserrat), sans-serif;
           font-size: 1rem;
           color: var(--text-secondary);
           margin-bottom: 8px;
@@ -766,7 +770,7 @@ export default function Home() {
         }
 
         .copyright {
-          font-family: 'Crimson Text', serif;
+          font-family: var(--font-montserrat), sans-serif;
           font-size: 0.85rem;
           color: rgba(255, 255, 255, 0.5);
           letter-spacing: 1px;
