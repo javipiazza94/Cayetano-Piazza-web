@@ -1,5 +1,8 @@
 export default function ConcertModule({ concert }) {
-    const formattedDate = new Date(concert.date).toLocaleString('es-ES', {
+    const concertDate = new Date(concert.date);
+    const isPast = concertDate < new Date();
+
+    const formattedDate = concertDate.toLocaleString('es-ES', {
         weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
     });
 
@@ -32,12 +35,16 @@ export default function ConcertModule({ concert }) {
                 {concert.description && <p style={{ marginTop: '10px' }}>{concert.description}</p>}
 
                 <div style={{ marginTop: 'auto', paddingTop: '20px' }}>
-                    {concert.ticketUrl ? (
-                        <a href={concert.ticketUrl} target="_blank" rel="noreferrer" className="btn-primary" style={{ width: '100%', textAlign: 'center', padding: '10px' }}>
+                    {isPast ? (
+                        <span style={{ display: 'block', textAlign: 'center', color: 'var(--text-secondary)', padding: '10px', background: 'rgba(255,255,255,0.05)', borderRadius: '2px', border: '1px solid rgba(255,255,255,0.1)', cursor: 'not-allowed' }}>
+                            ✅ Evento Celebrado
+                        </span>
+                    ) : concert.ticketUrl ? (
+                        <a href={concert.ticketUrl} target="_blank" rel="noreferrer" className="btn-primary" style={{ width: '100%', textAlign: 'center', padding: '10px', display: 'block' }}>
                             Comprar Entradas
                         </a>
                     ) : (
-                        <span style={{ display: 'block', textAlign: 'center', color: 'gray', fontStyle: 'italic' }}>Entradas no disponibles</span>
+                        <span style={{ display: 'block', textAlign: 'center', color: 'gray', fontStyle: 'italic', padding: '10px' }}>Entradas no disponibles</span>
                     )}
                 </div>
             </div>
