@@ -182,7 +182,7 @@ export default function Home() {
           <div className="footer-col">
             <h3 className="footer-heading">Redes Sociales</h3>
             <div className="social-icons">
-              <a href="#" aria-label="Instagram" className="social-icon-link">
+              <a href="https://www.instagram.com/glory_nights_concerts?igsh=MWtncnczNmd6bnIzMw==" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="social-icon-link">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                   <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
                   <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
@@ -194,7 +194,7 @@ export default function Home() {
                   <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 0 0-.79-.05A6.34 6.34 0 0 0 3.15 15a6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.34-6.34V9.17a8.16 8.16 0 0 0 4.76 1.53v-3.5a4.82 4.82 0 0 1-1-.51z" />
                 </svg>
               </a>
-              <a href="#" aria-label="Facebook" className="social-icon-link">
+              <a href="https://www.facebook.com/share/1HM1fH84d8/" aria-label="Facebook" target="_blank" rel="noopener noreferrer" className="social-icon-link">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
                 </svg>
