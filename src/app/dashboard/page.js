@@ -176,7 +176,7 @@ export default function DashboardPage() {
                                 {venues.map(v => <option key={v.id} value={v.id} style={{ background: '#1f2833' }}>{v.name}</option>)}
                             </select>
 
-                            <input style={inputStyle} type="datetime-local" required value={concertForm.date} onChange={e => setConcertForm({ ...concertForm, date: e.target.value })} />
+                            <input style={inputStyle} type="datetime-local" required step="any" min="2000-01-01T00:00" max="2099-12-31T23:59" value={concertForm.date} onChange={e => setConcertForm({ ...concertForm, date: e.target.value })} />
                             <input style={inputStyle} type="url" placeholder="URL de venta de entradas (opcional)" value={concertForm.ticketUrl} onChange={e => setConcertForm({ ...concertForm, ticketUrl: e.target.value })} />
                             <input style={inputStyle} type="text" placeholder="URL del vídeo promocional (opcional)" value={concertForm.videoUrl} onChange={e => setConcertForm({ ...concertForm, videoUrl: e.target.value })} />
                             <textarea style={{ ...inputStyle, resize: 'vertical' }} rows="3" placeholder="Descripción del concierto" value={concertForm.description} onChange={e => setConcertForm({ ...concertForm, description: e.target.value })}></textarea>
