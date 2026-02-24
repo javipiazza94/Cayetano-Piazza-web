@@ -10,7 +10,7 @@ export default function Home() {
           <p className="hero-subtitle">
             Descubre conciertos mágicos en lugares espectaculares. Disfruta de la mejor música de cámara homenajeando a Los Beatles, Mecano, El Señor de los Anillos y Harry Potter.
           </p>
-          <a href="/concerts" className="btn-primary" style={{ marginTop: '40px' }}>
+          <a href="/conciertos" className="btn-primary" style={{ marginTop: '40px' }}>
             Comprar entradas
           </a>
         </div>
@@ -136,7 +136,7 @@ export default function Home() {
           <p className="video-kicker">Gloria en cada nota</p>
           <h2 className="video-title">Una experiencia que<br />no olvidarás</h2>
           <p className="video-body">Más de 500 asistentes han vivido la magia de Glory Nights.<br />Únete a ellos y descubre los conciertos que están marcando la diferencia.</p>
-          <a href="/concerts" className="btn-primary video-cta">Ver próximas fechas</a>
+          <a href="/conciertos" className="btn-primary video-cta">Ver próximas fechas</a>
         </div>
       </section>
 
