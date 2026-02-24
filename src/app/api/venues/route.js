@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { client } from '../../../../database';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
     try {
         const { rows } = await client.execute('SELECT * FROM venues');
