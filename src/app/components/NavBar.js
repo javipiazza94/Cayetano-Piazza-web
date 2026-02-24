@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 
 export default function NavBar() {
     const [open, setOpen] = useState(false);
@@ -31,10 +32,10 @@ export default function NavBar() {
 
             {/* Desktop links */}
             <div className="nav-links">
-                <a href="/conciertos">Conciertos</a>
-                <a href="/artistas">Artistas</a>
-                <a href="/venues">Espacios</a>
-                <a href="/contact">Contacto</a>
+                <Link href="/conciertos">Conciertos</Link>
+                <Link href="/artistas">Artistas</Link>
+                <Link href="/venues">Espacios</Link>
+                <Link href="/contact">Contacto</Link>
             </div>
 
             {/* Hamburger button (mobile only) */}
@@ -52,10 +53,10 @@ export default function NavBar() {
             {/* Mobile overlay menu */}
             <div className={`nav-mobile-menu${open ? ' is-open' : ''}`} onClick={() => setOpen(false)}>
                 <div className="nav-mobile-links" onClick={(e) => e.stopPropagation()}>
-                    <a href="/conciertos" onClick={() => setOpen(false)}>Conciertos</a>
-                    <a href="/artistas" onClick={() => setOpen(false)}>Artistas</a>
-                    <a href="/venues" onClick={() => setOpen(false)}>Espacios</a>
-                    <a href="/contact" onClick={() => setOpen(false)}>Contacto</a>
+                    <Link href="/conciertos" onClick={() => setOpen(false)}>Conciertos</Link>
+                    <Link href="/artistas" onClick={() => setOpen(false)}>Artistas</Link>
+                    <Link href="/venues" onClick={() => setOpen(false)}>Espacios</Link>
+                    <Link href="/contact" onClick={() => setOpen(false)}>Contacto</Link>
                 </div>
             </div>
         </nav>

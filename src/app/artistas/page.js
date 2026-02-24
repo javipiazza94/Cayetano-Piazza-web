@@ -5,12 +5,17 @@ import ArtistModule from '../components/ArtistModule';
 export default function ArtistasPage() {
     const [bands, setBands] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(false);
 
     useEffect(() => {
         fetch('/api/bands')
             .then(res => res.json())
             .then(data => {
                 setBands(data);
+                setLoading(false);
+            })
+            .catch(() => {
+                setError(true);
                 setLoading(false);
             });
     }, []);
@@ -24,6 +29,8 @@ export default function ArtistasPage() {
 
             {loading ? (
                 <p style={{ textAlign: 'center' }}>Cargando artistas...</p>
+            ) : error ? (
+                <p style={{ textAlign: 'center', color: '#ff6b6b' }}>No se pudieron cargar los artistas. Inténtalo de nuevo más tarde.</p>
             ) : bands.length === 0 ? (
                 <p style={{ textAlign: 'center' }}>Aún no hay artistas registrados.</p>
             ) : (

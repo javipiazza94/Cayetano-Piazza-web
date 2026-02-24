@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { client } from '../../../../database';
+import { requireAuth } from '../../lib/auth';
 
 export const dynamic = 'force-dynamic';
 
@@ -13,8 +14,14 @@ export async function GET() {
 }
 
 export async function POST(request) {
+    const authError = requireAuth(request);
+    if (authError) return authError;
+
     try {
         const { name, tributeTo, description, imageUrl, videoUrl } = await request.json();
+        if (!name || !tributeTo) {
+            return NextResponse.json({ error: 'Nombre y Tributo son obligatorios.' }, { status: 400 });
+        }
         const result = await client.execute({
             sql: 'INSERT INTO bands (name, tributeTo, description, imageUrl, videoUrl) VALUES (?, ?, ?, ?, ?)',
             args: [name, tributeTo, description, imageUrl || null, videoUrl || null]
@@ -27,6 +34,9 @@ export async function POST(request) {
 }
 
 export async function PUT(request) {
+    const authError = requireAuth(request);
+    if (authError) return authError;
+
     try {
         const { id, name, tributeTo, description, imageUrl, videoUrl } = await request.json();
         await client.execute({
@@ -40,6 +50,9 @@ export async function PUT(request) {
 }
 
 export async function DELETE(request) {
+    const authError = requireAuth(request);
+    if (authError) return authError;
+
     try {
         const url = new URL(request.url);
         const id = url.searchParams.get('id');

@@ -6,7 +6,8 @@ export default function ContactPage() {
         senderName: '',
         senderEmail: '',
         message: '',
-        type: 'band'
+        type: 'band',
+        website: '' // honeypot field — only bots fill this
     });
     const [status, setStatus] = useState('');
 
@@ -25,7 +26,7 @@ export default function ContactPage() {
 
             if (res.ok) {
                 setStatus('success');
-                setFormData({ senderName: '', senderEmail: '', message: '', type: 'band' });
+                setFormData({ senderName: '', senderEmail: '', message: '', type: 'band', website: '' });
             } else {
                 setStatus('error');
             }
@@ -56,6 +57,18 @@ export default function ContactPage() {
                 )}
 
                 <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                    {/* Honeypot: invisible to humans, bots fill it */}
+                    <div style={{ position: 'absolute', left: '-9999px', opacity: 0, height: 0, overflow: 'hidden' }} aria-hidden="true">
+                        <label>Website</label>
+                        <input
+                            type="text"
+                            name="website"
+                            tabIndex={-1}
+                            autoComplete="off"
+                            value={formData.website}
+                            onChange={(e) => setFormData({ ...formData, website: e.target.value })}
+                        />
+                    </div>
                     <div>
                         <label style={{ display: 'block', marginBottom: '5px' }}>Nombre</label>
                         <input

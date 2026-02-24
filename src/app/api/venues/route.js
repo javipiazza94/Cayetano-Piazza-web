@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { client } from '../../../../database';
+import { requireAuth } from '../../lib/auth';
 
 export const dynamic = 'force-dynamic';
 
@@ -13,8 +14,14 @@ export async function GET() {
 }
 
 export async function POST(request) {
+    const authError = requireAuth(request);
+    if (authError) return authError;
+
     try {
         const { name, location, capacity, contactEmail, imageUrl, videoUrl, description } = await request.json();
+        if (!name || !location) {
+            return NextResponse.json({ error: 'Nombre y Ubicación son obligatorios.' }, { status: 400 });
+        }
         const result = await client.execute({
             sql: 'INSERT INTO venues (name, location, capacity, contactEmail, imageUrl, videoUrl, description) VALUES (?, ?, ?, ?, ?, ?, ?)',
             args: [name, location, capacity || null, contactEmail || null, imageUrl || null, videoUrl || null, description || null]
@@ -27,6 +34,9 @@ export async function POST(request) {
 }
 
 export async function PUT(request) {
+    const authError = requireAuth(request);
+    if (authError) return authError;
+
     try {
         const { id, name, location, capacity, contactEmail, imageUrl, videoUrl, description } = await request.json();
         await client.execute({
@@ -40,6 +50,9 @@ export async function PUT(request) {
 }
 
 export async function DELETE(request) {
+    const authError = requireAuth(request);
+    if (authError) return authError;
+
     try {
         const url = new URL(request.url);
         const id = url.searchParams.get('id');

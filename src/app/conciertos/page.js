@@ -5,6 +5,7 @@ import ConcertModule from '../components/ConcertModule';
 export default function ConciertosPage() {
     const [concerts, setConcerts] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(false);
     const [activeTab, setActiveTab] = useState('upcoming');
 
     useEffect(() => {
@@ -12,6 +13,10 @@ export default function ConciertosPage() {
             .then(res => res.json())
             .then(data => {
                 setConcerts(data);
+                setLoading(false);
+            })
+            .catch(() => {
+                setError(true);
                 setLoading(false);
             });
     }, []);
@@ -69,6 +74,8 @@ export default function ConciertosPage() {
 
             {loading ? (
                 <p style={{ textAlign: 'center' }}>Cargando conciertos...</p>
+            ) : error ? (
+                <p style={{ textAlign: 'center', color: '#ff6b6b' }}>No se pudieron cargar los conciertos. Inténtalo de nuevo más tarde.</p>
             ) : displayConcerts.length === 0 ? (
                 <p style={{ textAlign: 'center' }}>
                     {activeTab === 'upcoming' ? 'No hay conciertos programados por ahora.' : 'Aún no hay conciertos pasados.'}

@@ -1,6 +1,7 @@
 import { Montserrat, Playfair_Display } from 'next/font/google';
 import './globals.css';
 import NavBar from './components/NavBar';
+import { Analytics } from "@vercel/analytics/next";
 
 const montserrat = Montserrat({
   subsets: ['latin'],
@@ -28,6 +29,7 @@ export default function RootLayout({ children }) {
       <body className={montserrat.className}>
         <NavBar />
         <main>{children}</main>
+        <Analytics />
       </body>
     </html>
   );

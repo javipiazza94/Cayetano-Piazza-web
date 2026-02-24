@@ -5,12 +5,17 @@ import VenueModule from '../components/VenueModule';
 export default function VenuesPage() {
     const [venues, setVenues] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(false);
 
     useEffect(() => {
         fetch('/api/venues')
             .then(res => res.json())
             .then(data => {
                 setVenues(data);
+                setLoading(false);
+            })
+            .catch(() => {
+                setError(true);
                 setLoading(false);
             });
     }, []);
@@ -24,6 +29,8 @@ export default function VenuesPage() {
 
             {loading ? (
                 <p style={{ textAlign: 'center' }}>Cargando espacios...</p>
+            ) : error ? (
+                <p style={{ textAlign: 'center', color: '#ff6b6b' }}>No se pudieron cargar los espacios. Inténtalo de nuevo más tarde.</p>
             ) : venues.length === 0 ? (
                 <p style={{ textAlign: 'center' }}>Aún no hay salas registradas.</p>
             ) : (

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { client } from '../../../../database';
+import { requireAuth } from '../../lib/auth';
 
 export const dynamic = 'force-dynamic';
 
@@ -21,8 +22,14 @@ export async function GET() {
 }
 
 export async function POST(request) {
+    const authError = requireAuth(request);
+    if (authError) return authError;
+
     try {
         const { band_id, venue_id, date, ticketUrl, videoUrl, description } = await request.json();
+        if (!band_id || !venue_id || !date) {
+            return NextResponse.json({ error: 'Banda, Sala y Fecha son obligatorios.' }, { status: 400 });
+        }
         const result = await client.execute({
             sql: 'INSERT INTO concerts (band_id, venue_id, date, ticketUrl, videoUrl, description) VALUES (?, ?, ?, ?, ?, ?)',
             args: [band_id, venue_id, date, ticketUrl || null, videoUrl || null, description || null]
@@ -35,6 +42,9 @@ export async function POST(request) {
 }
 
 export async function PUT(request) {
+    const authError = requireAuth(request);
+    if (authError) return authError;
+
     try {
         const { id, band_id, venue_id, date, ticketUrl, videoUrl, description } = await request.json();
         await client.execute({
@@ -48,6 +58,9 @@ export async function PUT(request) {
 }
 
 export async function DELETE(request) {
+    const authError = requireAuth(request);
+    if (authError) return authError;
+
     try {
         const url = new URL(request.url);
         const id = url.searchParams.get('id');

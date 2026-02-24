@@ -1,12 +1,18 @@
 'use client';
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function DashboardPage() {
+    const router = useRouter();
+    const [authenticated, setAuthenticated] = useState(false);
+    const [checkingAuth, setCheckingAuth] = useState(true);
     const [activeTab, setActiveTab] = useState('bands');
 
     // Data State
     const [bands, setBands] = useState([]);
     const [venues, setVenues] = useState([]);
+    const [concerts, setConcerts] = useState([]);
+    const [messages, setMessages] = useState([]);
 
     // Editing State
     const [editingId, setEditingId] = useState({ bands: null, venues: null, concerts: null });
@@ -19,8 +25,6 @@ export default function DashboardPage() {
     const [bandForm, setBandForm] = useState(initialBand);
     const [venueForm, setVenueForm] = useState(initialVenue);
     const [concertForm, setConcertForm] = useState(initialConcert);
-    const [concerts, setConcerts] = useState([]);
-    const [messages, setMessages] = useState([]);
 
     const fetchData = async () => {
         fetch('/api/bands').then(res => res.json()).then(setBands);
@@ -29,9 +33,24 @@ export default function DashboardPage() {
         fetch('/api/contact').then(res => res.json()).then(setMessages);
     };
 
+    // Auth check on mount
     useEffect(() => {
-        fetchData();
-    }, []);
+        fetch('/api/auth/verify')
+            .then(res => {
+                if (!res.ok) {
+                    router.replace('/login');
+                } else {
+                    setAuthenticated(true);
+                    setCheckingAuth(false);
+                }
+            })
+            .catch(() => router.replace('/login'));
+    }, [router]);
+
+    // Fetch data once authenticated
+    useEffect(() => {
+        if (authenticated) fetchData();
+    }, [authenticated]);
 
     const handleEntitySubmit = async (e, type, endpoint, formData, tabKey) => {
         e.preventDefault();
@@ -71,9 +90,28 @@ export default function DashboardPage() {
 
     const inputStyle = { width: '100%', padding: '10px', marginBottom: '15px', borderRadius: '5px', background: 'rgba(0,0,0,0.3)', color: 'white', border: '1px solid var(--glass-border)' };
 
+    const handleLogout = async () => {
+        await fetch('/api/auth', { method: 'DELETE' });
+        router.replace('/login');
+    };
+
+    if (checkingAuth || !authenticated) {
+        return (
+            <div className="container animate-fade-in" style={{ padding: '80px 20px', textAlign: 'center' }}>
+                <p>Verificando acceso...</p>
+            </div>
+        );
+    }
+
     return (
         <div className="container animate-fade-in" style={{ padding: '40px 20px', maxWidth: '1000px', margin: '0 auto' }}>
-            <h1 style={{ textAlign: 'center', marginBottom: '20px', color: 'var(--accent)' }}>Panel del Promotor</h1>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                <div></div>
+                <h1 style={{ textAlign: 'center', color: 'var(--accent)', margin: 0 }}>Panel del Promotor</h1>
+                <button onClick={handleLogout} style={{ background: 'transparent', color: '#ff6b6b', border: '1px solid #ff6b6b', padding: '6px 16px', borderRadius: '4px', cursor: 'pointer', fontSize: '0.85rem' }}>
+                    Cerrar Sesión
+                </button>
+            </div>
             <p style={{ textAlign: 'center', marginBottom: '40px', color: 'var(--text-secondary)' }}>
                 Gestión de bases de datos para bandas, salas y conciertos.
             </p>
