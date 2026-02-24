@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { client } from '../../../../database';
 
+export const dynamic = 'force-dynamic';
+
 export async function POST(request) {
     try {
         const { senderName, senderEmail, message, type } = await request.json();
@@ -21,5 +23,19 @@ export async function GET() {
         return NextResponse.json(rows);
     } catch (error) {
         return NextResponse.json({ error: 'Failed to fetch messages' }, { status: 500 });
+    }
+}
+
+export async function DELETE(request) {
+    try {
+        const url = new URL(request.url);
+        const id = url.searchParams.get('id');
+        await client.execute({
+            sql: 'DELETE FROM messages WHERE id = ?',
+            args: [id]
+        });
+        return NextResponse.json({ success: true });
+    } catch (error) {
+        return NextResponse.json({ error: 'Failed to delete message' }, { status: 500 });
     }
 }

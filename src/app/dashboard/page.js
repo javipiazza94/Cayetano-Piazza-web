@@ -20,11 +20,13 @@ export default function DashboardPage() {
     const [venueForm, setVenueForm] = useState(initialVenue);
     const [concertForm, setConcertForm] = useState(initialConcert);
     const [concerts, setConcerts] = useState([]);
+    const [messages, setMessages] = useState([]);
 
     const fetchData = async () => {
         fetch('/api/bands').then(res => res.json()).then(setBands);
         fetch('/api/venues').then(res => res.json()).then(setVenues);
         fetch('/api/concerts').then(res => res.json()).then(setConcerts);
+        fetch('/api/contact').then(res => res.json()).then(setMessages);
     };
 
     useEffect(() => {
@@ -76,8 +78,8 @@ export default function DashboardPage() {
                 Gestión de bases de datos para bandas, salas y conciertos.
             </p>
 
-            <div style={{ display: 'flex', gap: '20px', marginBottom: '30px', justifyContent: 'center' }}>
-                {['bands', 'venues', 'concerts'].map(tab => (
+            <div style={{ display: 'flex', gap: '20px', marginBottom: '30px', justifyContent: 'center', flexWrap: 'wrap' }}>
+                {['bands', 'venues', 'concerts', 'messages'].map(tab => (
                     <button
                         key={tab}
                         onClick={() => setActiveTab(tab)}
@@ -89,7 +91,7 @@ export default function DashboardPage() {
                             fontSize: '0.9rem'
                         }}
                     >
-                        {tab === 'bands' ? 'Bandas' : tab === 'venues' ? 'Salas' : 'Conciertos'}
+                        {tab === 'bands' ? 'Bandas' : tab === 'venues' ? 'Salas' : tab === 'concerts' ? 'Conciertos' : 'Mensajes'}
                     </button>
                 ))}
             </div>
@@ -195,6 +197,30 @@ export default function DashboardPage() {
                                         <button onClick={() => startEdit('concerts', c)} style={{ background: 'transparent', color: '#4da6ff', border: 'none', cursor: 'pointer' }}>Editar</button>
                                         <button onClick={() => handleDelete('/api/concerts', c.id)} style={{ background: 'transparent', color: '#ff4d4d', border: 'none', cursor: 'pointer' }}>Eliminar</button>
                                     </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
+                {activeTab === 'messages' && (
+                    <div>
+                        <h2>Mensajes de Contacto</h2>
+                        <h3 style={{ marginTop: '20px', marginBottom: '20px', borderBottom: '1px solid var(--glass-border)', paddingBottom: '10px' }}>Bandeja de Entrada</h3>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                            {messages.length === 0 ? (
+                                <p style={{ color: 'gray' }}>No hay mensajes nuevos.</p>
+                            ) : messages.map(msg => (
+                                <div key={msg.id} style={{ background: 'rgba(255,255,255,0.05)', padding: '20px', borderRadius: '5px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '10px' }}>
+                                        <div>
+                                            <strong style={{ fontSize: '1.2rem', color: 'var(--accent)' }}>{msg.senderName}</strong> <span style={{ color: 'gray', fontSize: '0.9rem' }}> &lt;{msg.senderEmail}&gt;</span>
+                                            <div style={{ fontSize: '0.85rem', color: '#4da6ff', marginTop: '5px', textTransform: 'uppercase', letterSpacing: '1px' }}>Asunto: {msg.type}</div>
+                                            <div style={{ fontSize: '0.8rem', color: 'gray', marginTop: '2px' }}>Recibido: {new Date(msg.created_at).toLocaleString('es-ES', { dateStyle: 'long', timeStyle: 'short' })}</div>
+                                        </div>
+                                        <button onClick={() => handleDelete('/api/contact', msg.id)} style={{ background: 'transparent', color: '#ff4d4d', border: 'none', cursor: 'pointer', padding: '5px 10px', fontWeight: 'bold' }}>Eliminar</button>
+                                    </div>
+                                    <p style={{ color: 'var(--text-secondary)', lineHeight: '1.6', whiteSpace: 'pre-wrap', margin: 0, marginTop: '10px' }}>{msg.message}</p>
                                 </div>
                             ))}
                         </div>
