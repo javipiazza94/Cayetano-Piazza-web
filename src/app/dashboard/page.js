@@ -19,7 +19,7 @@ export default function DashboardPage() {
 
     // Forms State
     const initialBand = { name: '', tributeTo: '', description: '', imageUrl: '', videoUrl: '' };
-    const initialVenue = { name: '', location: '', capacity: '', imageUrl: '', videoUrl: '', description: '' };
+    const initialVenue = { name: '', location: '', capacity: '', contactEmail: '', imageUrl: '', videoUrl: '', description: '' };
     const initialConcert = { band_id: '', venue_id: '', date: '', ticketUrl: '', videoUrl: '', description: '' };
 
     const [bandForm, setBandForm] = useState(initialBand);
@@ -84,7 +84,7 @@ export default function DashboardPage() {
     const startEdit = (tabKey, item) => {
         setEditingId({ ...editingId, [tabKey]: item.id });
         if (tabKey === 'bands') setBandForm({ name: item.name, tributeTo: item.tributeTo, description: item.description || '', imageUrl: item.imageUrl || '', videoUrl: item.videoUrl || '' });
-        if (tabKey === 'venues') setVenueForm({ name: item.name, location: item.location, capacity: item.capacity || '', imageUrl: item.imageUrl || '', videoUrl: item.videoUrl || '', description: item.description || '' });
+        if (tabKey === 'venues') setVenueForm({ name: item.name, location: item.location, capacity: item.capacity || '', contactEmail: item.contactEmail || '', imageUrl: item.imageUrl || '', videoUrl: item.videoUrl || '', description: item.description || '' });
         if (tabKey === 'concerts') setConcertForm({ band_id: item.band_id, venue_id: item.venue_id, date: item.date, ticketUrl: item.ticketUrl || '', videoUrl: item.videoUrl || '', description: item.description || '' });
     };
 

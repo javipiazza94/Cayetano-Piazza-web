@@ -34,7 +34,7 @@ export default function VenuesPage() {
             ) : venues.length === 0 ? (
                 <p style={{ textAlign: 'center' }}>Aún no hay salas registradas.</p>
             ) : (
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '40px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
                     {venues.map(venue => (
                         <VenueModule key={venue.id} venue={venue} />
                     ))}
