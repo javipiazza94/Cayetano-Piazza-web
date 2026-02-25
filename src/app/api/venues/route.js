@@ -1,10 +1,11 @@
 import { NextResponse } from 'next/server';
-import { client } from '../../../../database';
+import { client, ensureDb } from '../../../../database';
 import { requireAuth } from '../../lib/auth';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
+    await ensureDb();
     try {
         const { rows } = await client.execute('SELECT * FROM venues');
         return NextResponse.json(rows);
@@ -18,6 +19,7 @@ export async function POST(request) {
     if (authError) return authError;
 
     try {
+        await ensureDb();
         const { name, location, capacity, contactEmail, imageUrl, videoUrl, description } = await request.json();
         if (!name || !location) {
             return NextResponse.json({ error: 'Nombre y Ubicación son obligatorios.' }, { status: 400 });
@@ -38,6 +40,7 @@ export async function PUT(request) {
     if (authError) return authError;
 
     try {
+        await ensureDb();
         const { id, name, location, capacity, contactEmail, imageUrl, videoUrl, description } = await request.json();
         await client.execute({
             sql: 'UPDATE venues SET name = ?, location = ?, capacity = ?, contactEmail = ?, imageUrl = ?, videoUrl = ?, description = ? WHERE id = ?',
@@ -54,6 +57,7 @@ export async function DELETE(request) {
     if (authError) return authError;
 
     try {
+        await ensureDb();
         const url = new URL(request.url);
         const id = url.searchParams.get('id');
         await client.execute({

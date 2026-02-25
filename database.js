@@ -6,6 +6,8 @@ const client = createClient({
   authToken: process.env.TURSO_AUTH_TOKEN,
 });
 
+let dbReady = null;
+
 async function initializeDatabase() {
   try {
     await client.execute(`
@@ -15,6 +17,7 @@ async function initializeDatabase() {
         tributeTo TEXT NOT NULL,
         description TEXT,
         imageUrl TEXT,
+        videoUrl TEXT,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
       )
     `);
@@ -26,6 +29,9 @@ async function initializeDatabase() {
         location TEXT NOT NULL,
         capacity INTEGER,
         contactEmail TEXT,
+        imageUrl TEXT,
+        videoUrl TEXT,
+        description TEXT,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
       )
     `);
@@ -37,6 +43,8 @@ async function initializeDatabase() {
         venue_id INTEGER,
         date TEXT NOT NULL,
         ticketUrl TEXT,
+        videoUrl TEXT,
+        description TEXT,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (band_id) REFERENCES bands (id),
         FOREIGN KEY (venue_id) REFERENCES venues (id)
@@ -55,24 +63,36 @@ async function initializeDatabase() {
     `);
     console.log('Database schema ensured.');
 
-    // Migration logic
-    try {
-      await client.execute(`ALTER TABLE venues ADD COLUMN imageUrl TEXT`);
-    } catch (e) { }
-
-    // Feature: Video URLs y Descripciones extra
-    try { await client.execute(`ALTER TABLE bands ADD COLUMN videoUrl TEXT`); } catch (e) { }
-    try { await client.execute(`ALTER TABLE venues ADD COLUMN videoUrl TEXT`); } catch (e) { }
-    try { await client.execute(`ALTER TABLE venues ADD COLUMN description TEXT`); } catch (e) { }
-    try { await client.execute(`ALTER TABLE concerts ADD COLUMN videoUrl TEXT`); } catch (e) { }
-    try { await client.execute(`ALTER TABLE concerts ADD COLUMN description TEXT`); } catch (e) { }
+    // Migrations for existing databases that were created before these columns existed
+    const migrations = [
+      `ALTER TABLE venues ADD COLUMN imageUrl TEXT`,
+      `ALTER TABLE venues ADD COLUMN videoUrl TEXT`,
+      `ALTER TABLE venues ADD COLUMN description TEXT`,
+      `ALTER TABLE bands ADD COLUMN videoUrl TEXT`,
+      `ALTER TABLE concerts ADD COLUMN videoUrl TEXT`,
+      `ALTER TABLE concerts ADD COLUMN description TEXT`,
+    ];
+    for (const sql of migrations) {
+      try { await client.execute(sql); } catch (e) { /* column already exists */ }
+    }
     console.log('Migrations checked.');
   } catch (error) {
     console.error('Failed to initialize database schema', error);
   }
 }
 
-// Iniciar las tablas de forma asíncrona la primera vez
-initializeDatabase();
+/**
+ * Ensures the database is initialized before any query.
+ * Call `await ensureDb()` at the start of every API handler.
+ */
+async function ensureDb() {
+  if (!dbReady) {
+    dbReady = initializeDatabase();
+  }
+  await dbReady;
+}
 
-export { client };
+// Kick off initialization eagerly (but API handlers also await it)
+ensureDb();
+
+export { client, ensureDb };

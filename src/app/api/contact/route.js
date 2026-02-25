@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { client } from '../../../../database';
+import { client, ensureDb } from '../../../../database';
 import { requireAuth } from '../../lib/auth';
 import { Resend } from 'resend';
 
@@ -13,6 +13,7 @@ const TYPE_LABELS = {
 
 export async function POST(request) {
     try {
+        await ensureDb();
         const { senderName, senderEmail, message, type, website } = await request.json();
 
         // Honeypot check: if filled, it's a bot
@@ -77,6 +78,7 @@ export async function POST(request) {
 }
 
 export async function GET() {
+    await ensureDb();
     try {
         const { rows } = await client.execute('SELECT * FROM messages ORDER BY created_at DESC');
         return NextResponse.json(rows);
@@ -90,6 +92,7 @@ export async function DELETE(request) {
     if (authError) return authError;
 
     try {
+        await ensureDb();
         const url = new URL(request.url);
         const id = url.searchParams.get('id');
         await client.execute({

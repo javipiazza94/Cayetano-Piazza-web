@@ -1,10 +1,11 @@
 import { NextResponse } from 'next/server';
-import { client } from '../../../../database';
+import { client, ensureDb } from '../../../../database';
 import { requireAuth } from '../../lib/auth';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
+    await ensureDb();
     try {
         const query = `
       SELECT concerts.*, bands.name as bandName, bands.imageUrl as bandImage, venues.name as venueName, venues.location
@@ -26,6 +27,7 @@ export async function POST(request) {
     if (authError) return authError;
 
     try {
+        await ensureDb();
         const { band_id, venue_id, date, ticketUrl, videoUrl, description } = await request.json();
         if (!band_id || !venue_id || !date) {
             return NextResponse.json({ error: 'Banda, Sala y Fecha son obligatorios.' }, { status: 400 });
@@ -46,6 +48,7 @@ export async function PUT(request) {
     if (authError) return authError;
 
     try {
+        await ensureDb();
         const { id, band_id, venue_id, date, ticketUrl, videoUrl, description } = await request.json();
         await client.execute({
             sql: 'UPDATE concerts SET band_id = ?, venue_id = ?, date = ?, ticketUrl = ?, videoUrl = ?, description = ? WHERE id = ?',
@@ -62,6 +65,7 @@ export async function DELETE(request) {
     if (authError) return authError;
 
     try {
+        await ensureDb();
         const url = new URL(request.url);
         const id = url.searchParams.get('id');
         await client.execute({
