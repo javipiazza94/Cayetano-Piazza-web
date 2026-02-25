@@ -35,6 +35,7 @@ export default function NavBar() {
                 <Link href="/conciertos">Conciertos</Link>
                 <Link href="/artistas">Artistas</Link>
                 <Link href="/venues">Espacios</Link>
+                <Link href="/sobre-nosotros">Sobre Nosotros</Link>
                 <Link href="/contact">Contacto</Link>
             </div>
 
@@ -56,6 +57,7 @@ export default function NavBar() {
                     <Link href="/conciertos" onClick={() => setOpen(false)}>Conciertos</Link>
                     <Link href="/artistas" onClick={() => setOpen(false)}>Artistas</Link>
                     <Link href="/venues" onClick={() => setOpen(false)}>Espacios</Link>
+                    <Link href="/sobre-nosotros" onClick={() => setOpen(false)}>Sobre Nosotros</Link>
                     <Link href="/contact" onClick={() => setOpen(false)}>Contacto</Link>
                 </div>
             </div>
