@@ -8,7 +8,7 @@ const COMPANY = {
     name: 'Glory Nights',
     tagline: 'La magia de la música a la luz de las velas',
     description: `Glory Nights nació de una pasión compartida: reunir a personas alrededor de la música en vivo en espacios únicos e íntimos, donde cada nota cobra vida bajo el cálido resplandor de cientos de velas.\n\nFundada en 2025, nuestra promotora ha producido más de 10 conciertos tributo en escenarios espectaculares Sevilla y Cádiz, acercando la magia de Los Beatles, Queen, Mecano, Harry Potter, El Señor de los Anillos y muchos otros artistas a miles de espectadores que buscan una experiencia musical diferente.`,
-    heroImage: '/img/concierto5.jpeg',
+    heroImage: '/img/concierto2.jpeg',
     videoUrl: '/img/concierto9.mp4', // Set to an .mp4 URL or null to hide
     stats: [
         { number: '10+', label: 'Conciertos producidos' },
