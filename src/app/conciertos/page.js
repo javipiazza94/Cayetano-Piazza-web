@@ -82,7 +82,7 @@ export default function ConciertosPage() {
             </div>
 
             {/* Filtro de Ciudades */}
-            {uniqueCities.length > 2 && (
+            {uniqueCities.length > 1 && (
                 <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '40px', alignItems: 'center', gap: '15px' }}>
                     <label htmlFor="city-filter" style={{ color: 'var(--text-secondary)', fontWeight: 'bold' }}>
                         Filtrar por ciudad:
