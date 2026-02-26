@@ -5,8 +5,6 @@ import { Resend } from 'resend';
 
 export const dynamic = 'force-dynamic';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 // POST — Public: subscribe to newsletter
 export async function POST(request) {
     try {
@@ -29,6 +27,7 @@ export async function POST(request) {
 
         // Welcome email
         if (process.env.RESEND_API_KEY) {
+            const resend = new Resend(process.env.RESEND_API_KEY);
             await resend.emails.send({
                 from: 'Glory Nights <onboarding@resend.dev>',
                 to: email,
