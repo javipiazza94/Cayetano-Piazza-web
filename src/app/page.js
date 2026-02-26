@@ -1,4 +1,20 @@
-export default function Home() {
+import NewsletterWidget from './components/NewsletterWidget';
+
+const FALLBACK_REVIEWS = [
+  { id: 'f1', author: 'María L. (Tributo a Mecano)', text: '"Una experiencia absolutamente inolvidable. La atmósfera íntima y la música perfecta hicieron una noche mágica."', stars: 5 },
+  { id: 'f2', author: 'Carlos G. (El Señor de los Anillos)', text: '"Me transporté directamente a la Tierra Media. El cuarteto de cuerdas fue espectacular y el lugar era precioso."', stars: 5 },
+  { id: 'f3', author: 'Laura S. (Harry Potter)', text: '"El ambiente a la luz de las velas le da un toque muy especial a la banda sonora de Harry Potter. ¡Repetiré seguro!"', stars: 5 },
+];
+
+export default async function Home() {
+  let reviews = [];
+  try {
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+    const res = await fetch(`${baseUrl}/api/reviews`, { cache: 'no-store' });
+    if (res.ok) reviews = await res.json();
+  } catch { /* use fallback */ }
+  if (!Array.isArray(reviews) || reviews.length === 0) reviews = FALLBACK_REVIEWS;
+
   return (
     <div className="home-container animate-fade-in">
       <header className="hero">
@@ -82,21 +98,13 @@ export default function Home() {
           <p>La magia de Glory Nights a través de sus experiencias</p>
         </div>
         <div className="reviews-grid">
-          <div className="review-card">
-            <div className="review-stars">★★★★★</div>
-            <p className="review-text">"Una experiencia absolutamente inolvidable. La atmósfera íntima y la música perfecta hicieron una noche mágica."</p>
-            <p className="review-author">- María L. (Tributo a Mecano)</p>
-          </div>
-          <div className="review-card">
-            <div className="review-stars">★★★★★</div>
-            <p className="review-text">"Me transporté directamente a la Tierra Media. El cuarteto de cuerdas fue espectacular y el lugar era precioso."</p>
-            <p className="review-author">- Carlos G. (El Señor de los Anillos)</p>
-          </div>
-          <div className="review-card">
-            <div className="review-stars">★★★★★</div>
-            <p className="review-text">"El ambiente a la luz de las velas le da un toque muy especial a la banda sonora de Harry Potter. ¡Repetiré seguro!"</p>
-            <p className="review-author">- Laura S. (Harry Potter)</p>
-          </div>
+          {reviews.map(r => (
+            <div className="review-card" key={r.id}>
+              <div className="review-stars">{'★'.repeat(r.stars || 5)}{'☆'.repeat(5 - (r.stars || 5))}</div>
+              <p className="review-text">{r.text}</p>
+              <p className="review-author">— {r.author}{r.concert_label ? ` (${r.concert_label})` : ''}</p>
+            </div>
+          ))}
         </div>
       </section>
 
@@ -160,6 +168,8 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      <NewsletterWidget />
 
       <footer className="footer-section">
         <div className="footer-logo-area">

@@ -11,6 +11,18 @@ const TYPE_LABELS = {
     other: 'Otro',
 };
 
+/** Resolves subscriber_id from a senderEmail. Returns null if not found. */
+async function resolveSubscriberId(email) {
+    if (!email) return null;
+    try {
+        const { rows } = await client.execute({
+            sql: 'SELECT id FROM subscribers WHERE email = ? LIMIT 1',
+            args: [email.toLowerCase().trim()],
+        });
+        return rows[0]?.id ?? null;
+    } catch { return null; }
+}
+
 export async function POST(request) {
     try {
         await ensureDb();
@@ -25,10 +37,13 @@ export async function POST(request) {
             return NextResponse.json({ error: 'Todos los campos son obligatorios.' }, { status: 400 });
         }
 
-        // 1. Save to database (always, regardless of email outcome)
+        // 1. Auto-resolve subscriber link if senderEmail matches a subscriber
+        const subscriber_id = await resolveSubscriberId(senderEmail);
+
+        // 2. Save to database (always, regardless of email outcome)
         const result = await client.execute({
-            sql: 'INSERT INTO messages (senderName, senderEmail, message, type) VALUES (?, ?, ?, ?)',
-            args: [senderName, senderEmail, message, type]
+            sql: 'INSERT INTO messages (senderName, senderEmail, message, type, subscriber_id) VALUES (?, ?, ?, ?, ?)',
+            args: [senderName, senderEmail, message, type, subscriber_id]
         });
 
         // 2. Send email notification if credentials are configured
@@ -80,7 +95,14 @@ export async function POST(request) {
 export async function GET() {
     await ensureDb();
     try {
-        const { rows } = await client.execute('SELECT * FROM messages ORDER BY created_at DESC');
+        const { rows } = await client.execute(`
+            SELECT m.*,
+                   s.email AS subscriber_email,
+                   s.name  AS subscriber_name
+            FROM messages m
+            LEFT JOIN subscribers s ON m.subscriber_id = s.id
+            ORDER BY m.created_at DESC
+        `);
         return NextResponse.json(rows);
     } catch (error) {
         return NextResponse.json({ error: 'Failed to fetch messages' }, { status: 500 });

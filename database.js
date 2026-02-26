@@ -10,6 +10,10 @@ let dbReady = null;
 
 async function initializeDatabase() {
   try {
+    // CRITICAL: SQLite/LibSQL does NOT enforce foreign keys by default.
+    // This pragma must be enabled per connection before any DML.
+    await client.execute('PRAGMA foreign_keys = ON');
+
     await client.execute(`
       CREATE TABLE IF NOT EXISTS bands (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -46,8 +50,8 @@ async function initializeDatabase() {
         videoUrl TEXT,
         description TEXT,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (band_id) REFERENCES bands (id),
-        FOREIGN KEY (venue_id) REFERENCES venues (id)
+        FOREIGN KEY (band_id) REFERENCES bands (id) ON DELETE SET NULL,
+        FOREIGN KEY (venue_id) REFERENCES venues (id) ON DELETE SET NULL
       )
     `);
 
@@ -58,6 +62,30 @@ async function initializeDatabase() {
         senderEmail TEXT NOT NULL,
         message TEXT NOT NULL,
         type TEXT NOT NULL,
+        subscriber_id INTEGER REFERENCES subscribers(id) ON DELETE SET NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    await client.execute(`
+      CREATE TABLE IF NOT EXISTS subscribers (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        email TEXT NOT NULL UNIQUE,
+        name TEXT,
+        subscribed_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    await client.execute(`
+      CREATE TABLE IF NOT EXISTS reviews (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        author TEXT NOT NULL,
+        text TEXT NOT NULL,
+        concert_label TEXT,
+        concert_id INTEGER REFERENCES concerts(id) ON DELETE SET NULL,
+        subscriber_id INTEGER REFERENCES subscribers(id) ON DELETE SET NULL,
+        stars INTEGER NOT NULL DEFAULT 5,
+        visible INTEGER NOT NULL DEFAULT 1,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
       )
     `);
@@ -71,6 +99,9 @@ async function initializeDatabase() {
       `ALTER TABLE bands ADD COLUMN videoUrl TEXT`,
       `ALTER TABLE concerts ADD COLUMN videoUrl TEXT`,
       `ALTER TABLE concerts ADD COLUMN description TEXT`,
+      `ALTER TABLE reviews ADD COLUMN concert_id INTEGER REFERENCES concerts(id) ON DELETE SET NULL`,
+      `ALTER TABLE reviews ADD COLUMN subscriber_id INTEGER REFERENCES subscribers(id) ON DELETE SET NULL`,
+      `ALTER TABLE messages ADD COLUMN subscriber_id INTEGER REFERENCES subscribers(id) ON DELETE SET NULL`,
     ];
     for (const sql of migrations) {
       try { await client.execute(sql); } catch (e) { /* column already exists */ }

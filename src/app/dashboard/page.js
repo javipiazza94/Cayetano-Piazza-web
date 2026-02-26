@@ -13,24 +13,30 @@ export default function DashboardPage() {
     const [venues, setVenues] = useState([]);
     const [concerts, setConcerts] = useState([]);
     const [messages, setMessages] = useState([]);
+    const [subscribers, setSubscribers] = useState([]);
+    const [reviews, setReviews] = useState([]);
 
     // Editing State
-    const [editingId, setEditingId] = useState({ bands: null, venues: null, concerts: null });
+    const [editingId, setEditingId] = useState({ bands: null, venues: null, concerts: null, reviews: null });
 
     // Forms State
     const initialBand = { name: '', tributeTo: '', description: '', imageUrl: '', videoUrl: '' };
     const initialVenue = { name: '', location: '', capacity: '', contactEmail: '', imageUrl: '', videoUrl: '', description: '' };
     const initialConcert = { band_id: '', venue_id: '', date: '', ticketUrl: '', videoUrl: '', description: '' };
+    const initialReview = { author: '', text: '', concert_label: '', concert_id: '', subscriber_email: '', stars: 5, visible: true };
 
     const [bandForm, setBandForm] = useState(initialBand);
     const [venueForm, setVenueForm] = useState(initialVenue);
     const [concertForm, setConcertForm] = useState(initialConcert);
+    const [reviewForm, setReviewForm] = useState(initialReview);
 
     const fetchData = async () => {
         fetch('/api/bands').then(res => res.json()).then(setBands);
         fetch('/api/venues').then(res => res.json()).then(setVenues);
         fetch('/api/concerts').then(res => res.json()).then(setConcerts);
         fetch('/api/contact').then(res => res.json()).then(setMessages);
+        fetch('/api/newsletter').then(res => res.json()).then(data => setSubscribers(Array.isArray(data) ? data : []));
+        fetch('/api/reviews').then(res => res.json()).then(data => setReviews(Array.isArray(data) ? data : []));
     };
 
     // Auth check on mount
@@ -79,6 +85,7 @@ export default function DashboardPage() {
         if (tabKey === 'bands') setBandForm(initialBand);
         if (tabKey === 'venues') setVenueForm(initialVenue);
         if (tabKey === 'concerts') setConcertForm(initialConcert);
+        if (tabKey === 'reviews') setReviewForm(initialReview);
     };
 
     const startEdit = (tabKey, item) => {
@@ -86,6 +93,7 @@ export default function DashboardPage() {
         if (tabKey === 'bands') setBandForm({ name: item.name, tributeTo: item.tributeTo, description: item.description || '', imageUrl: item.imageUrl || '', videoUrl: item.videoUrl || '' });
         if (tabKey === 'venues') setVenueForm({ name: item.name, location: item.location, capacity: item.capacity || '', contactEmail: item.contactEmail || '', imageUrl: item.imageUrl || '', videoUrl: item.videoUrl || '', description: item.description || '' });
         if (tabKey === 'concerts') setConcertForm({ band_id: item.band_id, venue_id: item.venue_id, date: item.date, ticketUrl: item.ticketUrl || '', videoUrl: item.videoUrl || '', description: item.description || '' });
+        if (tabKey === 'reviews') setReviewForm({ author: item.author, text: item.text, concert_label: item.concert_label || '', concert_id: item.concert_id || '', subscriber_email: item.subscriber_email || '', stars: item.stars || 5, visible: item.visible !== 0 });
     };
 
     const inputStyle = { width: '100%', padding: '10px', marginBottom: '15px', borderRadius: '5px', background: 'rgba(0,0,0,0.3)', color: 'white', border: '1px solid var(--glass-border)' };
@@ -117,7 +125,7 @@ export default function DashboardPage() {
             </p>
 
             <div style={{ display: 'flex', gap: '20px', marginBottom: '30px', justifyContent: 'center', flexWrap: 'wrap' }}>
-                {['bands', 'venues', 'concerts', 'messages'].map(tab => (
+                {['bands', 'venues', 'concerts', 'messages', 'subscribers', 'reviews'].map(tab => (
                     <button
                         key={tab}
                         onClick={() => setActiveTab(tab)}
@@ -129,7 +137,7 @@ export default function DashboardPage() {
                             fontSize: '0.9rem'
                         }}
                     >
-                        {tab === 'bands' ? 'Bandas' : tab === 'venues' ? 'Salas' : tab === 'concerts' ? 'Conciertos' : 'Mensajes'}
+                        {tab === 'bands' ? 'Bandas' : tab === 'venues' ? 'Salas' : tab === 'concerts' ? 'Conciertos' : tab === 'messages' ? 'Mensajes' : tab === 'subscribers' ? `Newsletter (${subscribers.length})` : 'Reseñas'}
                     </button>
                 ))}
             </div>
@@ -252,7 +260,15 @@ export default function DashboardPage() {
                                 <div key={msg.id} style={{ background: 'rgba(255,255,255,0.05)', padding: '20px', borderRadius: '5px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '10px' }}>
                                         <div>
-                                            <strong style={{ fontSize: '1.2rem', color: 'var(--accent)' }}>{msg.senderName}</strong> <span style={{ color: 'gray', fontSize: '0.9rem' }}> &lt;{msg.senderEmail}&gt;</span>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+                                                <strong style={{ fontSize: '1.2rem', color: 'var(--accent)' }}>{msg.senderName}</strong>
+                                                <span style={{ color: 'gray', fontSize: '0.9rem' }}>{"<"}{msg.senderEmail}{">"}</span>
+                                                {msg.subscriber_id && (
+                                                    <span style={{ fontSize: '0.75rem', padding: '2px 8px', borderRadius: '10px', background: 'rgba(197,160,89,0.15)', color: '#C5A059' }}>
+                                                        👤 Suscriptor
+                                                    </span>
+                                                )}
+                                            </div>
                                             <div style={{ fontSize: '0.85rem', color: '#4da6ff', marginTop: '5px', textTransform: 'uppercase', letterSpacing: '1px' }}>Asunto: {msg.type}</div>
                                             <div style={{ fontSize: '0.8rem', color: 'gray', marginTop: '2px' }}>Recibido: {new Date(msg.created_at).toLocaleString('es-ES', { dateStyle: 'long', timeStyle: 'short' })}</div>
                                         </div>
@@ -262,6 +278,117 @@ export default function DashboardPage() {
                                 </div>
                             ))}
                         </div>
+                    </div>
+                )}
+
+                {activeTab === 'subscribers' && (
+                    <div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                            <h2 style={{ margin: 0 }}>Suscriptores Newsletter</h2>
+                            <span style={{ background: 'rgba(197,160,89,0.15)', color: 'var(--accent)', padding: '6px 14px', borderRadius: '20px', fontSize: '0.9rem', fontWeight: 600 }}>
+                                {subscribers.length} suscriptor{subscribers.length !== 1 ? 'es' : ''}
+                            </span>
+                        </div>
+
+                        {subscribers.length === 0 ? (
+                            <div style={{ textAlign: 'center', padding: '60px 20px', color: 'gray' }}>
+                                <p style={{ fontSize: '2rem', marginBottom: '10px' }}>📭</p>
+                                <p>Aún no hay suscriptores. ¡Comparte el formulario en redes sociales!</p>
+                            </div>
+                        ) : (
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                                {subscribers.map(s => (
+                                    <div key={s.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(255,255,255,0.05)', padding: '14px 18px', borderRadius: '8px', gap: '12px' }}>
+                                        <div style={{ flex: 1, minWidth: 0 }}>
+                                            <strong style={{ color: 'var(--accent)' }}>{s.email}</strong>
+                                            {s.name && <span style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginLeft: '12px' }}>{s.name}</span>}
+                                            <div style={{ fontSize: '0.8rem', color: 'gray', marginTop: '4px' }}>
+                                                Se suscribió: {new Date(s.subscribed_at).toLocaleString('es-ES', { dateStyle: 'long', timeStyle: 'short' })}
+                                            </div>
+                                        </div>
+                                        <button onClick={() => handleDelete('/api/newsletter', s.id)} style={{ background: 'transparent', color: '#ff4d4d', border: 'none', cursor: 'pointer', padding: '4px 10px', fontWeight: 'bold', flexShrink: 0 }}>Eliminar</button>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                )}
+                {activeTab === 'reviews' && (
+                    <div>
+                        <h2>{editingId.reviews ? 'Editar Reseña' : 'Añadir Reseña'}</h2>
+                        <form onSubmit={(e) => handleEntitySubmit(e, 'Reseña', '/api/reviews', reviewForm, 'reviews')} style={{ marginTop: '20px' }}>
+                            <input style={inputStyle} type="text" placeholder="Autor (ej. María L.)" required value={reviewForm.author} onChange={e => setReviewForm({ ...reviewForm, author: e.target.value })} />
+                            <textarea style={{ ...inputStyle, resize: 'vertical' }} rows="3" placeholder="Texto de la reseña" required value={reviewForm.text} onChange={e => setReviewForm({ ...reviewForm, text: e.target.value })} />
+                            <input style={inputStyle} type="text" placeholder="Etiqueta del concierto (texto libre, ej. Tributo a Mecano)" value={reviewForm.concert_label} onChange={e => setReviewForm({ ...reviewForm, concert_label: e.target.value })} />
+
+                            {/* Enlazar con concierto de la BD (opcional) */}
+                            <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '6px' }}>Vincular concierto de la BD (opcional):</label>
+                            <select style={inputStyle} value={reviewForm.concert_id} onChange={e => setReviewForm({ ...reviewForm, concert_id: e.target.value })}>
+                                <option value="" style={{ background: '#1f2833' }}>— Sin vincular —</option>
+                                {concerts.map(c => (
+                                    <option key={c.id} value={c.id} style={{ background: '#1f2833' }}>
+                                        {c.bandName} @ {c.venueName} ({c.date ? new Date(c.date).toLocaleDateString('es-ES') : 'sin fecha'})
+                                    </option>
+                                ))}
+                            </select>
+
+                            {/* Enlazar con suscriptor (opcional) */}
+                            <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '6px' }}>Email del suscriptor (opcional — se vinculará si coincide con uno registrado):</label>
+                            <input style={inputStyle} type="email" placeholder="email@ejemplo.com" value={reviewForm.subscriber_email} onChange={e => setReviewForm({ ...reviewForm, subscriber_email: e.target.value })} />
+                            <div style={{ display: 'flex', gap: '20px', alignItems: 'center', marginBottom: '15px' }}>
+                                <div>
+                                    <label style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginRight: '8px' }}>Estrellas:</label>
+                                    <select style={{ ...inputStyle, width: 'auto', marginBottom: 0 }} value={reviewForm.stars} onChange={e => setReviewForm({ ...reviewForm, stars: parseInt(e.target.value) })}>
+                                        {[5, 4, 3, 2, 1].map(n => <option key={n} value={n} style={{ background: '#1f2833' }}>{'★'.repeat(n)} ({n})</option>)}
+                                    </select>
+                                </div>
+                                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
+                                    <input type="checkbox" checked={reviewForm.visible} onChange={e => setReviewForm({ ...reviewForm, visible: e.target.checked })} />
+                                    Visible en la web
+                                </label>
+                            </div>
+                            <div style={{ display: 'flex', gap: '10px' }}>
+                                <button type="submit" className="btn-primary">{editingId.reviews ? 'Actualizar Reseña' : 'Publicar Reseña'}</button>
+                                {editingId.reviews && <button type="button" onClick={() => cancelEdit('reviews')} className="btn-primary" style={{ background: 'transparent', color: 'gray', borderColor: 'gray' }}>Cancelar</button>}
+                            </div>
+                        </form>
+
+                        <h3 style={{ marginTop: '40px', marginBottom: '20px', borderBottom: '1px solid var(--glass-border)', paddingBottom: '10px' }}>Reseñas Publicadas</h3>
+                        {reviews.length === 0 ? (
+                            <p style={{ color: 'gray' }}>Aún no hay reseñas. ¡Añade la primera!</p>
+                        ) : (
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                                {reviews.map(r => (
+                                    <div key={r.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', background: 'rgba(255,255,255,0.05)', padding: '15px', borderRadius: '5px', gap: '10px' }}>
+                                        <div style={{ flex: 1, minWidth: 0 }}>
+                                            <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap', marginBottom: '4px' }}>
+                                                <strong>{r.author}</strong>
+                                                <span style={{ color: '#C5A059', fontSize: '0.9rem' }}>{'★'.repeat(r.stars)}</span>
+                                                {r.concert_label && <span style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>({r.concert_label})</span>}
+                                                <span style={{ fontSize: '0.75rem', padding: '2px 8px', borderRadius: '10px', background: r.visible ? 'rgba(80,200,120,0.15)' : 'rgba(255,100,100,0.15)', color: r.visible ? '#50c878' : '#ff6b6b' }}>
+                                                    {r.visible ? 'Visible' : 'Oculta'}
+                                                </span>
+                                                {r.concert_id && (
+                                                    <span style={{ fontSize: '0.75rem', padding: '2px 8px', borderRadius: '10px', background: 'rgba(77,166,255,0.15)', color: '#4da6ff' }}>
+                                                        🎵 {r.concert_band_name} @ {r.concert_venue_name}
+                                                    </span>
+                                                )}
+                                                {r.subscriber_id && (
+                                                    <span style={{ fontSize: '0.75rem', padding: '2px 8px', borderRadius: '10px', background: 'rgba(197,160,89,0.15)', color: '#C5A059' }}>
+                                                        👤 Suscriptor: {r.subscriber_email}
+                                                    </span>
+                                                )}
+                                            </div>
+                                            <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', margin: 0, fontStyle: 'italic' }}>{r.text}</p>
+                                        </div>
+                                        <div style={{ display: 'flex', gap: '10px', flexShrink: 0 }}>
+                                            <button onClick={() => startEdit('reviews', r)} style={{ background: 'transparent', color: '#4da6ff', border: 'none', cursor: 'pointer' }}>Editar</button>
+                                            <button onClick={() => handleDelete('/api/reviews', r.id)} style={{ background: 'transparent', color: '#ff4d4d', border: 'none', cursor: 'pointer' }}>Eliminar</button>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                     </div>
                 )}
             </div>
