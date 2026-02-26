@@ -34,7 +34,7 @@ export default function ArtistasPage() {
             ) : bands.length === 0 ? (
                 <p style={{ textAlign: 'center' }}>Aún no hay artistas registrados.</p>
             ) : (
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '40px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
                     {bands.map(band => (
                         <ArtistModule key={band.id} artist={band} />
                     ))}

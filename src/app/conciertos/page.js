@@ -7,6 +7,7 @@ export default function ConciertosPage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
     const [activeTab, setActiveTab] = useState('upcoming');
+    const [selectedCity, setSelectedCity] = useState('Todas');
 
     useEffect(() => {
         fetch('/api/concerts')
@@ -31,8 +32,16 @@ export default function ConciertosPage() {
         .filter(c => new Date(c.date) < now)
         .sort((a, b) => new Date(b.date) - new Date(a.date));
 
-    // Determinar qué lista mostrar
-    const displayConcerts = activeTab === 'upcoming' ? upcomingConcerts : pastConcerts;
+    // Determinar qué lista mostrar según la solapa
+    let displayConcerts = activeTab === 'upcoming' ? upcomingConcerts : pastConcerts;
+
+    // Filtrar por ciudad si no es "Todas"
+    if (selectedCity !== 'Todas') {
+        displayConcerts = displayConcerts.filter(c => c.location === selectedCity);
+    }
+
+    // Extraer ciudades únicas para el filtro
+    const uniqueCities = ['Todas', ...new Set(concerts.map(c => c.location).filter(Boolean))].sort();
 
     return (
         <div className="container animate-fade-in" style={{ padding: '40px 20px', maxWidth: '1200px', margin: '0 auto' }}>
@@ -72,6 +81,53 @@ export default function ConciertosPage() {
                 </button>
             </div>
 
+            {/* Filtro de Ciudades */}
+            {uniqueCities.length > 2 && (
+                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '40px', alignItems: 'center', gap: '15px' }}>
+                    <label htmlFor="city-filter" style={{ color: 'var(--text-secondary)', fontWeight: 'bold' }}>
+                        Filtrar por ciudad:
+                    </label>
+                    <div style={{ position: 'relative' }}>
+                        <select
+                            id="city-filter"
+                            value={selectedCity}
+                            onChange={(e) => setSelectedCity(e.target.value)}
+                            style={{
+                                appearance: 'none',
+                                background: 'rgba(255,255,255,0.05)',
+                                color: 'var(--text-main)',
+                                border: '1px solid rgba(197, 160, 89, 0.3)',
+                                borderRadius: '5px',
+                                padding: '10px 40px 10px 15px',
+                                fontSize: '1rem',
+                                outline: 'none',
+                                cursor: 'pointer',
+                                transition: 'border-color 0.3s ease'
+                            }}
+                            onFocus={(e) => e.target.style.borderColor = 'var(--accent)'}
+                            onBlur={(e) => e.target.style.borderColor = 'rgba(197, 160, 89, 0.3)'}
+                        >
+                            {uniqueCities.map(city => (
+                                <option key={city} value={city} style={{ background: '#0b0c10', color: 'var(--text-main)' }}>
+                                    {city}
+                                </option>
+                            ))}
+                        </select>
+                        <span style={{
+                            position: 'absolute',
+                            right: '15px',
+                            top: '50%',
+                            transform: 'translateY(-50%)',
+                            pointerEvents: 'none',
+                            color: 'var(--accent)',
+                            fontSize: '0.8rem'
+                        }}>
+                            ▼
+                        </span>
+                    </div>
+                </div>
+            )}
+
             {loading ? (
                 <p style={{ textAlign: 'center' }}>Cargando conciertos...</p>
             ) : error ? (
@@ -81,7 +137,7 @@ export default function ConciertosPage() {
                     {activeTab === 'upcoming' ? 'No hay conciertos programados por ahora.' : 'Aún no hay conciertos pasados.'}
                 </p>
             ) : (
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '40px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
                     {displayConcerts.map(concert => (
                         <ConcertModule key={concert.id} concert={concert} />
                     ))}
