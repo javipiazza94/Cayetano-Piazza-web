@@ -15,6 +15,8 @@ export default function DashboardPage() {
     const [messages, setMessages] = useState([]);
     const [subscribers, setSubscribers] = useState([]);
     const [reviews, setReviews] = useState([]);
+    const [notification, setNotification] = useState(null);
+    const [pendingDelete, setPendingDelete] = useState(null);
 
     // Editing State
     const [editingId, setEditingId] = useState({ bands: null, venues: null, concerts: null, reviews: null });
@@ -31,12 +33,20 @@ export default function DashboardPage() {
     const [reviewForm, setReviewForm] = useState(initialReview);
 
     const fetchData = async () => {
-        fetch('/api/bands').then(res => res.json()).then(setBands);
-        fetch('/api/venues').then(res => res.json()).then(setVenues);
-        fetch('/api/concerts').then(res => res.json()).then(setConcerts);
-        fetch('/api/contact').then(res => res.json()).then(setMessages);
-        fetch('/api/newsletter').then(res => res.json()).then(data => setSubscribers(Array.isArray(data) ? data : []));
-        fetch('/api/reviews').then(res => res.json()).then(data => setReviews(Array.isArray(data) ? data : []));
+        const [bands, venues, concerts, messages, newsletter, reviews] = await Promise.allSettled([
+            fetch('/api/bands').then(r => r.json()),
+            fetch('/api/venues').then(r => r.json()),
+            fetch('/api/concerts').then(r => r.json()),
+            fetch('/api/contact').then(r => r.json()),
+            fetch('/api/newsletter').then(r => r.json()),
+            fetch('/api/reviews').then(r => r.json()),
+        ]);
+        if (bands.status === 'fulfilled') setBands(bands.value);
+        if (venues.status === 'fulfilled') setVenues(venues.value);
+        if (concerts.status === 'fulfilled') setConcerts(concerts.value);
+        if (messages.status === 'fulfilled') setMessages(messages.value);
+        if (newsletter.status === 'fulfilled') setSubscribers(Array.isArray(newsletter.value) ? newsletter.value : []);
+        if (reviews.status === 'fulfilled') setReviews(Array.isArray(reviews.value) ? reviews.value : []);
     };
 
     // Auth check on mount
@@ -58,25 +68,47 @@ export default function DashboardPage() {
         if (authenticated) fetchData();
     }, [authenticated]);
 
+    // Auto-clear notification after 3 s
+    useEffect(() => {
+        if (!notification) return;
+        const timer = setTimeout(() => setNotification(null), 3000);
+        return () => clearTimeout(timer);
+    }, [notification]);
+
     const handleEntitySubmit = async (e, type, endpoint, formData, tabKey) => {
         e.preventDefault();
         const isEditing = editingId[tabKey] !== null;
         const method = isEditing ? 'PUT' : 'POST';
         const payload = isEditing ? { ...formData, id: editingId[tabKey] } : formData;
 
-        await fetch(endpoint, {
+        const res = await fetch(endpoint, {
             method,
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         });
-        alert(`${type} ${isEditing ? 'actualizado' : 'guardado'} con éxito!`);
+        if (res.ok) {
+            setNotification({ type: 'success', message: `${type} ${isEditing ? 'actualizado' : 'guardado'} con éxito!` });
+        } else {
+            setNotification({ type: 'error', message: `Error al ${isEditing ? 'actualizar' : 'guardar'} ${type}.` });
+        }
         cancelEdit(tabKey);
         fetchData();
     };
 
-    const handleDelete = async (endpoint, id) => {
-        if (!confirm('¿Estás seguro de que deseas eliminar este elemento?')) return;
-        await fetch(`${endpoint}?id=${id}`, { method: 'DELETE' });
+    const handleDelete = (endpoint, id) => {
+        setPendingDelete({ endpoint, id });
+    };
+
+    const confirmDelete = async () => {
+        if (!pendingDelete) return;
+        const { endpoint, id } = pendingDelete;
+        setPendingDelete(null);
+        const res = await fetch(`${endpoint}?id=${id}`, { method: 'DELETE' });
+        if (res.ok) {
+            setNotification({ type: 'success', message: 'Elemento eliminado.' });
+        } else {
+            setNotification({ type: 'error', message: 'Error al eliminar el elemento.' });
+        }
         fetchData();
     };
 
@@ -123,6 +155,40 @@ export default function DashboardPage() {
             <p style={{ textAlign: 'center', marginBottom: '40px', color: 'var(--text-secondary)' }}>
                 Gestión de bases de datos para bandas, salas y conciertos.
             </p>
+
+            {notification && (
+                <div style={{
+                    padding: '12px 20px',
+                    marginBottom: '20px',
+                    borderRadius: '6px',
+                    background: notification.type === 'success' ? 'rgba(80,200,120,0.15)' : 'rgba(255,100,100,0.15)',
+                    border: `1px solid ${notification.type === 'success' ? '#50c878' : '#ff6b6b'}`,
+                    color: notification.type === 'success' ? '#50c878' : '#ff6b6b',
+                    textAlign: 'center',
+                    fontWeight: 500,
+                }}>
+                    {notification.message}
+                </div>
+            )}
+
+            {pendingDelete && (
+                <div style={{
+                    padding: '12px 20px',
+                    marginBottom: '20px',
+                    borderRadius: '6px',
+                    background: 'rgba(255,165,0,0.1)',
+                    border: '1px solid orange',
+                    color: 'orange',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    gap: '16px',
+                }}>
+                    <span>¿Eliminar este elemento?</span>
+                    <button onClick={confirmDelete} style={{ background: '#ff4d4d', color: '#fff', border: 'none', borderRadius: '4px', padding: '4px 14px', cursor: 'pointer', fontWeight: 600 }}>Sí</button>
+                    <button onClick={() => setPendingDelete(null)} style={{ background: 'transparent', color: 'orange', border: '1px solid orange', borderRadius: '4px', padding: '4px 14px', cursor: 'pointer' }}>No</button>
+                </div>
+            )}
 
             <div style={{ display: 'flex', gap: '20px', marginBottom: '30px', justifyContent: 'center', flexWrap: 'wrap' }}>
                 {['bands', 'venues', 'concerts', 'messages', 'subscribers', 'reviews'].map(tab => (

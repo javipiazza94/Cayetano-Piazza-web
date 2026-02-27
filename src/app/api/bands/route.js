@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { client, ensureDb } from '../../../../database';
-import { requireAuth } from '../../lib/auth';
+import { withAuth } from '../../lib/apiWrapper';
 
 export const dynamic = 'force-dynamic';
 
@@ -14,12 +14,8 @@ export async function GET() {
     }
 }
 
-export async function POST(request) {
-    const authError = requireAuth(request);
-    if (authError) return authError;
-
-    try {
-        await ensureDb();
+export function POST(request) {
+    return withAuth(request, async () => {
         const { name, tributeTo, description, imageUrl, videoUrl } = await request.json();
         if (!name || !tributeTo) {
             return NextResponse.json({ error: 'Nombre y Tributo son obligatorios.' }, { status: 400 });
@@ -28,36 +24,23 @@ export async function POST(request) {
             sql: 'INSERT INTO bands (name, tributeTo, description, imageUrl, videoUrl) VALUES (?, ?, ?, ?, ?)',
             args: [name, tributeTo, description, imageUrl || null, videoUrl || null]
         });
-
         return NextResponse.json({ id: result.lastInsertRowid?.toString(), success: true }, { status: 201 });
-    } catch (error) {
-        return NextResponse.json({ error: 'Failed to create band' }, { status: 500 });
-    }
+    });
 }
 
-export async function PUT(request) {
-    const authError = requireAuth(request);
-    if (authError) return authError;
-
-    try {
-        await ensureDb();
+export function PUT(request) {
+    return withAuth(request, async () => {
         const { id, name, tributeTo, description, imageUrl, videoUrl } = await request.json();
         await client.execute({
             sql: 'UPDATE bands SET name = ?, tributeTo = ?, description = ?, imageUrl = ?, videoUrl = ? WHERE id = ?',
             args: [name, tributeTo, description, imageUrl || null, videoUrl || null, id]
         });
         return NextResponse.json({ success: true });
-    } catch (error) {
-        return NextResponse.json({ error: 'Failed to update band' }, { status: 500 });
-    }
+    });
 }
 
-export async function DELETE(request) {
-    const authError = requireAuth(request);
-    if (authError) return authError;
-
-    try {
-        await ensureDb();
+export function DELETE(request) {
+    return withAuth(request, async () => {
         const url = new URL(request.url);
         const id = url.searchParams.get('id');
         await client.execute({
@@ -65,7 +48,5 @@ export async function DELETE(request) {
             args: [id]
         });
         return NextResponse.json({ success: true });
-    } catch (error) {
-        return NextResponse.json({ error: 'Failed to delete band' }, { status: 500 });
-    }
+    });
 }
