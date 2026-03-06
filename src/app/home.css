@@ -2,18 +2,23 @@
           padding-bottom: 0;
         }
 
+        /* ═══ HERO ═══════════════════════════════════════════════ */
         .hero {
           position: relative;
           min-height: 100vh;
           display: flex;
           align-items: center;
           justify-content: center;
-          /* background photo simulating candlelight/classic concert */
-          background: url("/img/concierto5.jpeg") center/cover no-repeat;
           margin-bottom: 0;
+          overflow: hidden;
         }
 
-        .hero::before {
+        /* next/image fill background */
+        .hero-bg-image {
+          z-index: 0;
+        }
+
+        .hero::after {
           content: '';
           position: absolute;
           top: 0; left: 0; right: 0; bottom: 0;
@@ -21,10 +26,16 @@
           z-index: 1;
         }
 
+        .hero-overlay {
+          position: absolute;
+          inset: 0;
+          z-index: 1;
+        }
+
         .hero-content {
           position: relative;
           z-index: 2;
-          padding: 60px 20px;
+          padding: 140px 20px 60px; /* extra top para navbar fija */
           max-width: 900px;
           text-align: center;
           display: flex;
@@ -64,7 +75,7 @@
           text-shadow: 0 2px 10px rgba(255,255,255,0.5);
         }
 
-        /* ===== LIGHT SECTIONS (White bg, dark text) ===== */
+        /* ═══ SECCIONES CLARAS (fondo blanco) ════════════════════ */
         .section-header {
           text-align: center;
           margin-bottom: 60px;
@@ -91,7 +102,7 @@
           margin: 0 auto;
         }
 
-        /* Featured / Cartelera */
+        /* ═══ CARTELERA DESTACADA ════════════════════════════════ */
         .featured-section {
           background: #FFFFFF;
           max-width: 100%;
@@ -124,7 +135,7 @@
           box-shadow: 0 16px 40px rgba(0,0,0,0.12);
         }
 
-        .band-card:hover .band-img-placeholder {
+        .band-card:hover .band-img-placeholder img {
           transform: scale(1.05);
         }
 
@@ -136,6 +147,10 @@
           aspect-ratio: 3 / 4;
           width: 100%;
           position: relative;
+          overflow: hidden;
+        }
+
+        .band-img-placeholder img {
           transition: transform 0.6s ease;
         }
 
@@ -153,6 +168,7 @@
           letter-spacing: 1px;
           text-align: center;
           border-radius: 4px;
+          z-index: 2;
         }
 
         .band-info {
@@ -227,7 +243,7 @@
           font-family: var(--font-playfair), serif;
         }
 
-        /* Reviews Section */
+        /* ═══ RESEÑAS ═══════════════════════════════════════════ */
         .reviews-section {
           background: #F8F7F4;
           max-width: 100%;
@@ -256,6 +272,12 @@
           border-radius: 8px;
           border-top: 3px solid #C5A059;
           box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+          transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .review-card:hover {
+          transform: translateY(-4px);
+          box-shadow: 0 12px 30px rgba(0,0,0,0.1);
         }
 
         .review-stars {
@@ -282,43 +304,65 @@
           margin-top: auto;
         }
 
-        /* Gallery Section */
+        /* ═══ GALERÍA BENTO GRID ═════════════════════════════════ */
         .gallery-section {
           background: #FFFFFF;
           max-width: 100%;
           padding: 100px 20px;
         }
 
-
-        .gallery-section .gallery-grid {
+        .gallery-section .bento-grid {
           max-width: 1200px;
           margin: 0 auto;
         }
 
-        .gallery-grid {
+        .bento-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-          gap: 20px;
+          grid-template-columns: repeat(3, 1fr);
+          grid-auto-rows: 280px;
+          gap: 16px;
         }
 
-        .gallery-item {
-          height: 320px;
-          background-size: cover;
-          background-position: center;
-          border-radius: 8px;
-          transition: transform 0.5s ease, filter 0.5s ease;
-          filter: none;
+        .bento-item {
+          position: relative;
+          border-radius: 12px;
+          overflow: hidden;
           cursor: pointer;
+          transition: transform 0.4s ease, box-shadow 0.4s ease;
           box-shadow: 0 4px 15px rgba(0,0,0,0.08);
         }
 
-        .gallery-item:hover {
+        .bento-item:hover {
           transform: scale(1.02);
-          filter: brightness(1.05);
           box-shadow: 0 10px 30px rgba(0,0,0,0.15);
         }
 
-        /* Video Section */
+        .bento-item img {
+          transition: transform 0.6s ease, filter 0.6s ease;
+        }
+
+        .bento-item:hover img {
+          transform: scale(1.08);
+          filter: brightness(1.08);
+        }
+
+        /* Item grande: ocupa 2 columnas y 2 filas */
+        .bento-large {
+          grid-column: span 2;
+          grid-row: span 2;
+        }
+
+        /* Item ancho: ocupa 2 columnas */
+        .bento-wide {
+          grid-column: span 2;
+        }
+
+        /* Item alto: ocupa 2 filas */
+        .bento-tall {
+          grid-row: span 2;
+        }
+
+        /* ═══ SECCIÓN DE VÍDEO ═══════════════════════════════════ */
         .video-section {
           position: relative;
           width: 100%;
@@ -413,7 +457,7 @@
           }
         }
 
-        /* FAQ Section */
+        /* ═══ FAQ ═════════════════════════════════════════════════ */
         .faq-section {
           background: #F8F7F4;
           max-width: 100%;
@@ -442,6 +486,12 @@
           border: 1px solid #eeeeee;
           border-radius: 8px;
           box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+          transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .faq-item:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 6px 20px rgba(0,0,0,0.08);
         }
 
         .faq-item h3 {
@@ -461,7 +511,7 @@
           opacity: 1;
         }
 
-        /* Footer Section */
+        /* ═══ FOOTER ═════════════════════════════════════════════ */
         .footer-section {
           background: #1a1a1a;
           margin: 0;
@@ -559,12 +609,16 @@
           letter-spacing: 1px;
         }
 
+        /* ═══ RESPONSIVE ═════════════════════════════════════════ */
         @media (max-width: 768px) {
           .hero-title {
             font-size: 3rem;
           }
           .hero-subtitle {
             font-size: 1.1rem;
+          }
+          .hero-content {
+            padding: 120px 16px 40px;
           }
           .section-header h2 {
             font-size: 2.2rem;
@@ -574,6 +628,22 @@
           .gallery-section,
           .faq-section {
             padding: 60px 16px;
+          }
+          /* Bento grid: 2 columnas en móvil */
+          .bento-grid {
+            grid-template-columns: repeat(2, 1fr);
+            grid-auto-rows: 180px;
+            gap: 10px;
+          }
+          .bento-large {
+            grid-column: span 2;
+            grid-row: span 1;
+          }
+          .bento-wide {
+            grid-column: span 2;
+          }
+          .bento-tall {
+            grid-row: span 1;
           }
           .footer-columns {
             flex-direction: column;

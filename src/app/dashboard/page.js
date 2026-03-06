@@ -144,7 +144,7 @@ export default function DashboardPage() {
     }
 
     return (
-        <div className="container animate-fade-in" style={{ padding: '40px 20px', maxWidth: '1000px', margin: '0 auto' }}>
+        <div className="container animate-fade-in" style={{ padding: '160px 20px 40px', maxWidth: '1000px', margin: '0 auto' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
                 <div></div>
                 <h1 style={{ textAlign: 'center', color: 'var(--accent)', margin: 0 }}>Panel del Promotor</h1>

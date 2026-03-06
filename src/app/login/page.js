@@ -34,7 +34,7 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="container animate-fade-in" style={{ padding: '80px 20px', maxWidth: '450px', margin: '0 auto', minHeight: '70vh', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+        <div className="container animate-fade-in" style={{ padding: '160px 20px 80px', maxWidth: '450px', margin: '0 auto', minHeight: '70vh', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
             <div className="glass-panel" style={{ padding: '40px 30px', textAlign: 'center' }}>
                 <h1 style={{ fontSize: '2rem', marginBottom: '10px' }}>Panel del Promotor</h1>
                 <p style={{ color: 'var(--text-secondary)', marginBottom: '30px', fontSize: '0.95rem' }}>

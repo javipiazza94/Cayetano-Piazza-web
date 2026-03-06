@@ -21,7 +21,7 @@ export default function ArtistasPage() {
     }, []);
 
     return (
-        <div className="container animate-fade-in" style={{ padding: '40px 20px', maxWidth: '1200px', margin: '0 auto' }}>
+        <div className="container animate-fade-in" style={{ padding: '160px 20px 40px', maxWidth: '1200px', margin: '0 auto' }}>
             <h1 style={{ textAlign: 'center', marginBottom: '20px', fontSize: '3rem', color: 'var(--accent)' }}>Nuestros Artistas</h1>
             <p style={{ textAlign: 'center', marginBottom: '60px', color: 'var(--text-secondary)' }}>
                 Los mejores tributos interpretados por músicos excepcionales.

@@ -44,7 +44,7 @@ export default function ConciertosPage() {
     const uniqueCities = ['Todas', ...new Set(concerts.map(c => c.location).filter(Boolean))].sort();
 
     return (
-        <div className="container animate-fade-in" style={{ padding: '40px 20px', maxWidth: '1200px', margin: '0 auto' }}>
+        <div className="container animate-fade-in" style={{ padding: '160px 20px 40px', maxWidth: '1200px', margin: '0 auto' }}>
             <h1 style={{ textAlign: 'center', marginBottom: '10px', fontSize: '3.5rem', color: 'var(--accent)' }}>Cartelera</h1>
             <p style={{ textAlign: 'center', marginBottom: '40px', color: 'var(--text-secondary)' }}>
                 Vive la música en su estado más puro bajo la mágica luz de las velas.

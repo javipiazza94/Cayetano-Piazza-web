@@ -89,6 +89,19 @@ async function initializeDatabase() {
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
       )
     `);
+
+    // ── Analytics: tracking de eventos local (sin cookies) ──
+    await client.execute(`
+      CREATE TABLE IF NOT EXISTS analytics_events (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        event_name TEXT NOT NULL,
+        metadata TEXT,
+        page_url TEXT,
+        referrer TEXT,
+        event_timestamp TEXT,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
     console.log('Database schema ensured.');
 
     // Migrations for existing databases that were created before these columns existed
