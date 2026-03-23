@@ -8,7 +8,9 @@ export async function GET() {
     await ensureDb();
     try {
         const { rows } = await client.execute('SELECT * FROM bands');
-        return NextResponse.json(rows);
+        return NextResponse.json(rows, {
+            headers: { 'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300' },
+        });
     } catch (error) {
         return NextResponse.json({ error: 'Failed to fetch bands' }, { status: 500 });
     }

@@ -26,7 +26,9 @@ export async function GET() {
             WHERE r.visible = 1
             ORDER BY r.created_at DESC
         `);
-        return NextResponse.json(rows);
+        return NextResponse.json(rows, {
+            headers: { 'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300' },
+        });
     } catch (error) {
         return NextResponse.json({ error: 'Failed to fetch reviews' }, { status: 500 });
     }
@@ -81,8 +83,10 @@ export async function POST(request) {
         if (!author || !text) {
             return NextResponse.json({ error: 'Autor y texto son obligatorios.' }, { status: 400 });
         }
-        const subscriber_id = await resolveSubscriberId(subscriber_email);
-        const resolved_label = await resolveConcertLabel(concert_id, concert_label);
+        const [subscriber_id, resolved_label] = await Promise.all([
+            resolveSubscriberId(subscriber_email),
+            resolveConcertLabel(concert_id, concert_label),
+        ]);
         const result = await client.execute({
             sql: `INSERT INTO reviews
                     (author, text, concert_label, concert_id, subscriber_id, stars, visible)
@@ -112,8 +116,10 @@ export async function PUT(request) {
     await ensureDb();
     try {
         const { id, author, text, concert_label, concert_id, subscriber_email, stars, visible } = await request.json();
-        const subscriber_id = await resolveSubscriberId(subscriber_email);
-        const resolved_label = await resolveConcertLabel(concert_id, concert_label);
+        const [subscriber_id, resolved_label] = await Promise.all([
+            resolveSubscriberId(subscriber_email),
+            resolveConcertLabel(concert_id, concert_label),
+        ]);
         await client.execute({
             sql: `UPDATE reviews
                   SET author = ?, text = ?, concert_label = ?, concert_id = ?,
