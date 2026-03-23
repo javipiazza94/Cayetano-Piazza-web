@@ -40,8 +40,8 @@ const GLORY_NIGHTS_CONTEXT = {
         'Tributos a Los Beatles, Mecano, Harry Potter, El Señor de los Anillos',
     ],
     locations: ['Sevilla', 'Cádiz', 'Sanlúcar de Barrameda', 'Alcalá de Guadaira'],
-    contact: 'info@glorynights.es',
-    website: 'https://glorynights.es',
+    contact: 'info@glorynightsconcerts.com',
+    website: 'https://glorynightsconcerts.com',
 };
 
 export async function POST(request) {
@@ -58,7 +58,7 @@ export async function POST(request) {
 
     return NextResponse.json({
         active: false,
-        message: 'El asistente AI no está activo en este momento. Contacta con info@glorynights.es para cualquier consulta.',
+        message: 'El asistente AI no está activo en este momento. Contacta con info@glorynightsconcerts.com para cualquier consulta.',
         context: GLORY_NIGHTS_CONTEXT,
         setup_instructions: 'Ver comentarios en este archivo para instrucciones de activación.',
     }, { status: 200 });

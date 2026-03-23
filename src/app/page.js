@@ -33,11 +33,11 @@ const websiteSchema = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
   name: 'Glory Nights',
-  url: process.env.NEXT_PUBLIC_SITE_URL || 'https://glorynights.es',
+  url: process.env.NEXT_PUBLIC_SITE_URL || 'https://glorynightsconcerts.com',
   description: 'Promotora de conciertos tributo a la luz de las velas en Andalucía.',
   potentialAction: {
     '@type': 'SearchAction',
-    target: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://glorynights.es'}/conciertos`,
+    target: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://glorynightsconcerts.com'}/conciertos`,
     'query-input': 'required name=search_term_string',
   },
 };
@@ -306,7 +306,7 @@ export default async function Home() {
         <div className="footer-columns">
           <div className="footer-col">
             <h3 className="footer-heading">Contacto</h3>
-            <p className="footer-text">info@glorynights.es</p>
+            <p className="footer-text">info@glorynightsconcerts.com</p>
             <p className="footer-text">+34 600 000 000</p>
           </div>
 

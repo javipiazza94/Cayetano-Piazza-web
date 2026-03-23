@@ -22,7 +22,7 @@ const playfair = Playfair_Display({
 
 // ── Metadata SEO global con OpenGraph y Twitter Cards ──
 export const metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://glorynights.es'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://glorynightsconcerts.com'),
   title: {
     default: 'Glory Nights | Conciertos bajo una nueva luz',
     template: '%s | Glory Nights',
@@ -57,15 +57,15 @@ const organizationSchema = {
   '@type': 'Organization',
   name: 'Glory Nights',
   description: 'Promotora de conciertos tributo a la luz de las velas en Andalucía.',
-  url: process.env.NEXT_PUBLIC_SITE_URL || 'https://glorynights.es',
-  logo: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://glorynights.es'}/img/GLORY NIGHTS LOGO.jpeg`,
+  url: process.env.NEXT_PUBLIC_SITE_URL || 'https://glorynightsconcerts.com',
+  logo: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://glorynightsconcerts.com'}/img/GLORY NIGHTS LOGO.jpeg`,
   sameAs: [
     'https://www.instagram.com/glory_nights_concerts',
     'https://www.facebook.com/share/1HM1fH84d8/',
   ],
   contactPoint: {
     '@type': 'ContactPoint',
-    email: 'info@glorynights.es',
+    email: 'info@glorynightsconcerts.com',
     contactType: 'customer service',
     availableLanguage: 'Spanish',
   },

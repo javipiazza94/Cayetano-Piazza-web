@@ -43,7 +43,7 @@ export async function POST(request) {
                       <p style="line-height:1.8;color:#ccc">Gracias por suscribirte. A partir de ahora serás el primero en enterarte de nuestros nuevos conciertos, artistas y fechas especiales.</p>
                       <p style="line-height:1.8;color:#ccc">Te esperamos bajo la luz de las velas. ✨</p>
                       <div style="text-align:center;margin:32px 0;">
-                        <a href="${process.env.NEXT_PUBLIC_SITE_URL || 'https://glorynights.es'}/conciertos"
+                        <a href="${process.env.NEXT_PUBLIC_SITE_URL || 'https://glorynightsconcerts.com'}/conciertos"
                           style="background:#C5A059;color:#0b0c10;text-decoration:none;padding:14px 32px;border-radius:6px;font-weight:700;font-family:sans-serif;letter-spacing:1px;font-size:0.9rem;">VER PRÓXIMOS CONCIERTOS</a>
                       </div>
                       <p style="font-size:0.8rem;color:#666;text-align:center;border-top:1px solid #222;padding-top:24px;">Si no te suscribiste, ignora este mensaje.</p>
