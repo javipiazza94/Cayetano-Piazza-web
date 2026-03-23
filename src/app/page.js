@@ -1,131 +1,236 @@
+/**
+ * page.js — Página principal de Glory Nights
+ * ─────────────────────────────────────────────────────────────────
+ * Incluye las siguientes mejoras:
+ *  - next/image para todas las imágenes (WebP/AVIF automático)
+ *  - AnimatedSection para scroll-reveal en cada bloque
+ *  - AnimatedButton para CTAs con micro-interacciones
+ *  - SocialProof con contadores animados
+ *  - Galería Bento Grid responsiva
+ *  - A/B testing del headline principal
+ *  - Video con preload="none" para reducir LCP
+ *  - Componente HeroClient para la parte interactiva (A/B + animaciones)
+ */
+import Image from 'next/image';
 import NewsletterWidget from './components/NewsletterWidget';
+import AnimatedSection from './components/AnimatedSection';
+import AnimatedButton from './components/AnimatedButton';
+import SocialProof from './components/SocialProof';
+import JsonLd from './components/JsonLd';
+import HeroClient from './components/HeroClient';
+import LinkToMain from './components/LinkToMain';
+import './home.css';
 
+// ── Reseñas de respaldo (se usan si la API no responde) ──
 const FALLBACK_REVIEWS = [
   { id: 'f1', author: 'María L. (Tributo a Mecano)', text: '"Una experiencia absolutamente inolvidable. La atmósfera íntima y la música perfecta hicieron una noche mágica."', stars: 5 },
   { id: 'f2', author: 'Carlos G. (El Señor de los Anillos)', text: '"Me transporté directamente a la Tierra Media. El cuarteto de cuerdas fue espectacular y el lugar era precioso."', stars: 5 },
   { id: 'f3', author: 'Laura S. (Harry Potter)', text: '"El ambiente a la luz de las velas le da un toque muy especial a la banda sonora de Harry Potter. ¡Repetiré seguro!"', stars: 5 },
 ];
 
+// ── JSON-LD para la landing page (WebSite + Event schema) ──
+const websiteSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'Glory Nights',
+  url: process.env.NEXT_PUBLIC_SITE_URL || 'https://glorynights.es',
+  description: 'Promotora de conciertos tributo a la luz de las velas en Andalucía.',
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://glorynights.es'}/conciertos`,
+    'query-input': 'required name=search_term_string',
+  },
+};
+
 export default async function Home() {
+  // ── Fetch de reseñas en el servidor ──
   let reviews = [];
   try {
     const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
     const res = await fetch(`${baseUrl}/api/reviews`, { cache: 'no-store' });
     if (res.ok) reviews = await res.json();
-  } catch { /* use fallback */ }
+  } catch { /* usar fallback */ }
   if (!Array.isArray(reviews) || reviews.length === 0) reviews = FALLBACK_REVIEWS;
 
   return (
-    <div className="home-container animate-fade-in">
+    <div className="home-container">
+      <JsonLd data={websiteSchema} />
+
+      {/* ══════════════════════════════════════════════════════════
+          HERO — Con A/B testing del headline (componente client)
+          ══════════════════════════════════════════════════════════ */}
       <header className="hero">
+        {/* Imagen hero optimizada con next/image */}
+        <Image
+          src="/img/concierto5.jpeg"
+          alt="Concierto a la luz de las velas"
+          fill
+          priority /* Prioridad máxima para LCP */
+          sizes="100vw"
+          style={{ objectFit: 'cover' }}
+          quality={75}
+          className="hero-bg-image"
+        />
         <div className="hero-overlay"></div>
-        <div className="hero-content">
-          <div className="candle-glow"></div>
-          <p className="hero-kicker">Una experiencia musical inmersiva</p>
-          <h1 className="hero-title">Tributos a la luz<br />de las velas</h1>
-          <p className="hero-subtitle">
-            Descubre conciertos mágicos en lugares espectaculares. Disfruta de la mejor música de cámara homenajeando a Los Beatles, Mecano, El Señor de los Anillos y Harry Potter.
-          </p>
-          <a href="/conciertos" className="btn-primary" style={{ marginTop: '40px' }}>
-            Comprar entradas
-          </a>
-        </div>
+        <HeroClient />
       </header>
 
-      <section className="featured-section">
-        <div className="section-header text-center">
-          <h2>Cartelera Destacada</h2>
-          <p>Los homenajes más esperados en un ambiente íntimo y espectacular</p>
-        </div>
+      {/* ══════════════════════════════════════════════════════════
+          CARTELERA DESTACADA
+          ══════════════════════════════════════════════════════════ */}
+      <AnimatedSection>
+        <section className="featured-section">
+          <div className="section-header text-center">
+            <h2>Cartelera Destacada</h2>
+            <p>Los homenajes más esperados en un ambiente íntimo y espectacular</p>
+          </div>
 
-        <div className="bands-grid">
-          <div className="band-card">
-            <div className="band-img-wrapper">
-              <div className="band-img-placeholder" style={{ background: 'url("/img/conciertos-de-verano.jpg") center/cover' }}>
-                <div className="date-badge">JUL 25</div>
+          <div className="bands-grid">
+            {/* Card 1 */}
+            <div className="band-card">
+              <div className="band-img-wrapper">
+                <div className="band-img-placeholder" style={{ position: 'relative' }}>
+                  <Image
+                    src="/img/conciertos-de-verano.jpg"
+                    alt="Conciertos de verano Glory Nights"
+                    fill
+                    sizes="(max-width: 768px) 100vw, 400px"
+                    style={{ objectFit: 'cover' }}
+                  />
+                  <div className="date-badge">JUL 25</div>
+                </div>
+              </div>
+              <div className="band-info">
+                <span className="category">Pop / Clásico</span>
+                <h3>Conciertos de verano</h3>
+                <p className="location">📍 Bodegas Hidaldo: LA GITANA, Sanlúcar de Barrameda</p>
+                <div className="card-footer">
+                  <span className="price">Desde 25,00 €</span>
+                  <span className="tickets-link">Ver entradas →</span>
+                </div>
               </div>
             </div>
-            <div className="band-info">
-              <span className="category">Pop / Clásico</span>
-              <h3>Conciertos de verano </h3>
-              <p className="location">📍 Bodegas Hidaldo: LA GITANA, Sanlúcar de Barrameda</p>
-              <div className="card-footer">
-                <span className="price">Desde 25,00 €</span>
-                <span className="tickets-link">Ver entradas →</span>
+
+            {/* Card 2 */}
+            <div className="band-card">
+              <div className="band-img-wrapper">
+                <div className="band-img-placeholder" style={{ position: 'relative' }}>
+                  <Image
+                    src="/img/glory-nightsharry-potter--el-senor-de-los-anillos.jpg"
+                    alt="El Señor de los Anillos bajo las Estrellas"
+                    fill
+                    sizes="(max-width: 768px) 100vw, 400px"
+                    style={{ objectFit: 'cover' }}
+                  />
+                  <div className="date-badge">20 FEB</div>
+                </div>
+              </div>
+              <div className="band-info">
+                <span className="category">Bandas Sonoras</span>
+                <h3>El Señor de los Anillos bajo las Estrellas</h3>
+                <p className="location">📍 Teatro Gutiérrez de Alba, Alcalá de Guadaira</p>
+                <div className="card-footer">
+                  <span className="price">Desde 25,00 €</span>
+                  <span className="tickets-link">Ver entradas →</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Card 3 */}
+            <div className="band-card">
+              <div className="band-img-wrapper">
+                <div className="band-img-placeholder" style={{ position: 'relative' }}>
+                  <Image
+                    src="/img/harry-poter.jpeg"
+                    alt="La Magia de Harry Potter en Concierto"
+                    fill
+                    sizes="(max-width: 768px) 100vw, 400px"
+                    style={{ objectFit: 'cover' }}
+                  />
+                  <div className="date-badge">20 FEB</div>
+                </div>
+              </div>
+              <div className="band-info">
+                <span className="category">Bandas Sonoras</span>
+                <h3>La Magia de Harry Potter en Concierto</h3>
+                <p className="location">📍 Teatro Gutiérrez de Alba, Alcalá de Guadaira</p>
+                <div className="card-footer">
+                  <span className="price">Desde 15,00 €</span>
+                  <span className="tickets-link">Ver entradas →</span>
+                </div>
               </div>
             </div>
           </div>
+        </section>
+      </AnimatedSection>
 
-          <div className="band-card">
-            <div className="band-img-wrapper">
-              <div className="band-img-placeholder" style={{ background: 'url("/img/glory-nightsharry-potter--el-senor-de-los-anillos.jpg") center/cover' }}>
-                <div className="date-badge">20 FEB</div>
+      {/* ══════════════════════════════════════════════════════════
+          SOCIAL PROOF — Contadores animados
+          ══════════════════════════════════════════════════════════ */}
+      <SocialProof />
+
+      {/* ══════════════════════════════════════════════════════════
+          RESEÑAS
+          ══════════════════════════════════════════════════════════ */}
+      <AnimatedSection delay={0.1}>
+        <section className="reviews-section">
+          <div className="section-header text-center">
+            <h2>Lo que dicen nuestros asistentes</h2>
+            <p>La magia de Glory Nights a través de sus experiencias</p>
+          </div>
+          <div className="reviews-grid">
+            {reviews.map(r => (
+              <div className="review-card" key={r.id}>
+                <div className="review-stars">{'★'.repeat(r.stars || 5)}{'☆'.repeat(5 - (r.stars || 5))}</div>
+                <p className="review-text">{r.text}</p>
+                <p className="review-author">— {r.author}{r.concert_label ? ` (${r.concert_label})` : ''}</p>
               </div>
+            ))}
+          </div>
+        </section>
+      </AnimatedSection>
+
+      {/* ══════════════════════════════════════════════════════════
+          GALERÍA BENTO GRID
+          ══════════════════════════════════════════════════════════ */}
+      <AnimatedSection delay={0.15}>
+        <section className="gallery-section">
+          <div className="section-header text-center">
+            <h2>Galería</h2>
+            <p>Instantes mágicos capturados a la luz de las velas</p>
+          </div>
+          <div className="bento-grid">
+            {/* Fila 1-2: grande (2×2) + alto (1×2) */}
+            <div className="bento-item bento-large">
+              <Image src="/img/concierto1.jpeg" alt="Concierto Glory Nights 1" fill sizes="(max-width: 768px) 100vw, 600px" style={{ objectFit: 'cover' }} />
             </div>
-            <div className="band-info">
-              <span className="category">Bandas Sonoras</span>
-              <h3>El Señor de los Anillos bajo las Estrellas</h3>
-              <p className="location">📍 Teatro Gutiérrez de Alba, Alcalá de Guadaira</p>
-              <div className="card-footer">
-                <span className="price">Desde 25,00 €</span>
-                <span className="tickets-link">Ver entradas →</span>
-              </div>
+            <div className="bento-item bento-tall">
+              <Image src="/img/concierto2.jpeg" alt="Concierto Glory Nights 2" fill sizes="(max-width: 768px) 100vw, 300px" style={{ objectFit: 'cover' }} />
+            </div>
+            {/* Fila 3: 3 items regulares */}
+            <div className="bento-item">
+              <Image src="/img/concierto3.jpeg" alt="Concierto Glory Nights 3" fill sizes="(max-width: 768px) 100vw, 300px" style={{ objectFit: 'cover' }} />
+            </div>
+            <div className="bento-item">
+              <Image src="/img/concierto4.jpeg" alt="Concierto Glory Nights 4" fill sizes="(max-width: 768px) 100vw, 300px" style={{ objectFit: 'cover' }} />
+            </div>
+            <div className="bento-item">
+              <Image src="/img/concierto5.jpeg" alt="Concierto Glory Nights 5" fill sizes="(max-width: 768px) 100vw, 300px" style={{ objectFit: 'cover' }} />
+            </div>
+            {/* Fila 4: ancho (2×1) + regular */}
+            <div className="bento-item bento-wide">
+              <Image src="/img/concierto6.jpeg" alt="Concierto Glory Nights 6" fill sizes="(max-width: 768px) 100vw, 600px" style={{ objectFit: 'cover' }} />
+            </div>
+            <div className="bento-item">
+              <Image src="/img/concierto7.jpeg" alt="Concierto Glory Nights 7" fill sizes="(max-width: 768px) 100vw, 300px" style={{ objectFit: 'cover' }} />
             </div>
           </div>
+        </section>
+      </AnimatedSection>
 
-          <div className="band-card">
-            <div className="band-img-wrapper">
-              <div className="band-img-placeholder" style={{ background: 'url("/img/harry-poter.jpeg") center/cover' }}>
-                <div className="date-badge">20 FEB</div>
-              </div>
-            </div>
-            <div className="band-info">
-              <span className="category">Bandas Sonoras</span>
-              <h3>La Magia de Harry Potter en Concierto</h3>
-              <p className="location">📍 Teatro Gutiérrez de Alba, Alcalá de Guadaira</p>
-              <div className="card-footer">
-                <span className="price">Desde 15,00 €</span>
-                <span className="tickets-link">Ver entradas →</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="reviews-section">
-        <div className="section-header text-center">
-          <h2>Lo que dicen nuestros asistentes</h2>
-          <p>La magia de Glory Nights a través de sus experiencias</p>
-        </div>
-        <div className="reviews-grid">
-          {reviews.map(r => (
-            <div className="review-card" key={r.id}>
-              <div className="review-stars">{'★'.repeat(r.stars || 5)}{'☆'.repeat(5 - (r.stars || 5))}</div>
-              <p className="review-text">{r.text}</p>
-              <p className="review-author">— {r.author}{r.concert_label ? ` (${r.concert_label})` : ''}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section className="gallery-section">
-        <div className="section-header text-center">
-          <h2>Galería</h2>
-          <p>Instantes mágicos capturados a la luz de las velas</p>
-        </div>
-        <div className="gallery-grid">
-          <div className="gallery-item" style={{ backgroundImage: 'url("/img/concierto1.jpeg")' }}></div>
-          <div className="gallery-item" style={{ backgroundImage: 'url("/img/concierto2.jpeg")' }}></div>
-          <div className="gallery-item" style={{ backgroundImage: 'url("/img/concierto3.jpeg")' }}></div>
-          <div className="gallery-item" style={{ backgroundImage: 'url("/img/concierto4.jpeg")' }}></div>
-          <div className="gallery-item" style={{ backgroundImage: 'url("/img/concierto5.jpeg")' }}></div>
-          <div className="gallery-item" style={{ backgroundImage: 'url("/img/concierto6.jpeg")' }}></div>
-          <div className="gallery-item" style={{ backgroundImage: 'url("/img/concierto7.jpeg")' }}></div>
-          <div className="gallery-item" style={{ backgroundImage: 'url("/img/concierto8.jpeg")' }}></div>
-        </div>
-      </section>
-
-      {/* VIDEO SECTION */}
+      {/* ══════════════════════════════════════════════════════════
+          SECCIÓN DE VÍDEO
+          ══════════════════════════════════════════════════════════ */}
       <section className="video-section">
         <video
           className="video-bg"
@@ -133,6 +238,7 @@ export default async function Home() {
           muted
           loop
           playsInline
+          preload="none" /* No descargar vídeo hasta que sea necesario */
         >
           <source src="/img/concierto12.mp4" type="video/mp4" />
           <source src="/img/concierto9.mp4" type="video/mp4" />
@@ -144,39 +250,54 @@ export default async function Home() {
           <p className="video-kicker">Gloria en cada nota</p>
           <h2 className="video-title">Una experiencia que<br />no olvidarás</h2>
           <p className="video-body">Más de 500 asistentes han vivido la magia de Glory Nights.<br />Únete a ellos y descubre los conciertos que están marcando la diferencia.</p>
-          <a href="/conciertos" className="btn-primary video-cta">Ver próximas fechas</a>
+          <AnimatedButton href="/conciertos" className="btn-primary video-cta">
+            Ver próximas fechas
+          </AnimatedButton>
         </div>
       </section>
 
-      <section className="faq-section">
-        <div className="section-header">
-          <h2>Preguntas Frecuentes</h2>
-          <p>Todo lo que necesitas saber antes de vivir la magia</p>
-        </div>
-        <div className="faq-container">
-          <div className="faq-item">
-            <h3>¿Cuál es el código de vestimenta?</h3>
-            <p>Recomendamos un estilo elegante casual, acorde a la atmósfera clásica de la localización pero asegurando tu comodidad.</p>
+      {/* ══════════════════════════════════════════════════════════
+          FAQ
+          ══════════════════════════════════════════════════════════ */}
+      <AnimatedSection>
+        <section className="faq-section">
+          <div className="section-header">
+            <h2>Preguntas Frecuentes</h2>
+            <p>Todo lo que necesitas saber antes de vivir la magia</p>
           </div>
-          <div className="faq-item glass-panel">
-            <h3>¿Puedo tomar fotografías durante la actuación?</h3>
-            <p>Se permiten fotografías sin flash antes y después de los conciertos para no interrumpir la experiencia inmersiva del resto de asistentes.</p>
+          <div className="faq-container">
+            <div className="faq-item">
+              <h3>¿Cuál es el código de vestimenta?</h3>
+              <p>Recomendamos un estilo elegante casual, acorde a la atmósfera clásica de la localización pero asegurando tu comodidad.</p>
+            </div>
+            <div className="faq-item glass-panel">
+              <h3>¿Puedo tomar fotografías durante la actuación?</h3>
+              <p>Se permiten fotografías sin flash antes y después de los conciertos para no interrumpir la experiencia inmersiva del resto de asistentes.</p>
+            </div>
+            <div className="faq-item glass-panel">
+              <h3>¿A qué hora abren las puertas del recinto?</h3>
+              <p>Las puertas abren formalmente 45 minutos antes del inicio del evento. Una vez comenzado el concierto no se permitirá el acceso a la sala.</p>
+            </div>
           </div>
-          <div className="faq-item glass-panel">
-            <h3>¿A qué hora abren las puertas del recinto?</h3>
-            <p>Las puertas abren formalmente 45 minutos antes del inicio del evento. Una vez comenzado el concierto no se permitirá el acceso a la sala.</p>
-          </div>
-        </div>
-      </section>
+        </section>
+      </AnimatedSection>
 
+      {/* ══════════════════════════════════════════════════════════
+          NEWSLETTER
+          ══════════════════════════════════════════════════════════ */}
       <NewsletterWidget />
 
+      {/* ══════════════════════════════════════════════════════════
+          FOOTER
+          ══════════════════════════════════════════════════════════ */}
       <footer className="footer-section">
         <div className="footer-logo-area">
           <a href="/">
-            <img
+            <Image
               src="/img/GLORY NIGHTS LOGO.jpeg"
               alt="Glory Nights"
+              width={200}
+              height={100}
               className="footer-logo-img"
             />
           </a>
@@ -220,598 +341,11 @@ export default async function Home() {
         </div>
 
         <div className="footer-bottom-bar">
+          <LinkToMain />
           <p className="copyright">&copy; {new Date().getFullYear()} Glory Nights. Todos los derechos reservados.</p>
         </div>
       </footer>
 
-      <style>{`
-        .home-container {
-          padding-bottom: 0;
-        }
-        
-        .hero {
-          position: relative;
-          min-height: 100vh;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          /* background photo simulating candlelight/classic concert */
-          background: url("/img/concierto5.jpeg") center/cover no-repeat;
-          margin-bottom: 0;
-        }
-
-        .hero::before {
-          content: '';
-          position: absolute;
-          top: 0; left: 0; right: 0; bottom: 0;
-          background: linear-gradient(to bottom, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.5) 50%, rgba(0,0,0,0.85) 100%);
-          z-index: 1;
-        }
-        
-        .hero-content {
-          position: relative;
-          z-index: 2;
-          padding: 60px 20px;
-          max-width: 900px;
-          text-align: center;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-        }
-
-        .hero-kicker {
-          font-family: var(--font-montserrat), sans-serif;
-          font-weight: 500;
-          letter-spacing: 4px;
-          text-transform: uppercase;
-          font-size: 0.9rem;
-          color: var(--accent-dark);
-          margin-bottom: 20px;
-        }
-
-        .hero-title {
-          font-family: var(--font-playfair), serif;
-          font-size: 4.5rem;
-          font-weight: 700;
-          line-height: 1.1;
-          margin-bottom: 30px;
-          color: var(--text-primary);
-          text-shadow: 0 4px 20px rgba(255,255,255,0.5);
-          letter-spacing: -1px;
-        }
-
-        .hero-subtitle {
-          font-family: var(--font-montserrat), sans-serif;
-          font-weight: 400;
-          font-size: 1.25rem;
-          color: var(--text-secondary);
-          max-width: 650px;
-          margin: 0 auto;
-          line-height: 1.8;
-          text-shadow: 0 2px 10px rgba(255,255,255,0.5);
-        }
-
-        /* ===== LIGHT SECTIONS (White bg, dark text) ===== */
-        .section-header {
-          text-align: center;
-          margin-bottom: 60px;
-          padding: 0 20px;
-        }
-        
-        .section-header h2 {
-          font-family: var(--font-playfair), serif;
-          font-size: 3.2rem;
-          font-weight: 700;
-          margin-bottom: 20px;
-          color: #1A1A1A;
-          line-height: 1.25;
-          letter-spacing: -0.5px;
-        }
-        
-        .section-header p {
-          color: #1A1A1A;
-          font-size: 1.15rem;
-          font-family: var(--font-montserrat), sans-serif;
-          font-weight: 400;
-          line-height: 1.8;
-          max-width: 620px;
-          margin: 0 auto;
-        }
-
-        /* Featured / Cartelera */
-        .featured-section {
-          background: #FFFFFF;
-          max-width: 100%;
-          padding: 100px 20px;
-        }
-
-        .featured-section .bands-grid {
-          max-width: 1200px;
-          margin: 0 auto;
-        }
-
-        .bands-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-          gap: 40px;
-        }
-
-        .band-card {
-          overflow: hidden;
-          transition: transform 0.4s ease, box-shadow 0.4s ease;
-          cursor: pointer;
-          background: #FFFFFF;
-          border: 1px solid #e8e8e8;
-          border-radius: 8px;
-          box-shadow: 0 4px 20px rgba(0,0,0,0.06);
-        }
-
-        .band-card:hover {
-          transform: translateY(-6px);
-          box-shadow: 0 16px 40px rgba(0,0,0,0.12);
-        }
-
-        .band-card:hover .band-img-placeholder {
-          transform: scale(1.05);
-        }
-
-        .band-img-wrapper {
-          overflow: hidden;
-        }
-
-        .band-img-placeholder {
-          aspect-ratio: 3 / 4;
-          width: 100%;
-          position: relative;
-          transition: transform 0.6s ease;
-        }
-
-        .date-badge {
-          position: absolute;
-          top: 15px;
-          right: 15px;
-          background: rgba(0,0,0,0.75);
-          border: none;
-          color: #FFFFFF;
-          padding: 8px 14px;
-          font-family: var(--font-montserrat), sans-serif;
-          font-size: 0.8rem;
-          font-weight: 600;
-          letter-spacing: 1px;
-          text-align: center;
-          border-radius: 4px;
-        }
-
-        .band-info {
-          padding: 28px 25px;
-        }
-
-        .category {
-          font-family: var(--font-montserrat), sans-serif;
-          font-size: 0.8rem;
-          font-weight: 600;
-          text-transform: uppercase;
-          letter-spacing: 2px;
-          color: #C5A059;
-          margin-bottom: 12px;
-          display: block;
-        }
-
-        .band-info h3 {
-          font-family: var(--font-playfair), serif;
-          font-size: 1.5rem;
-          margin-bottom: 12px;
-          color: #1A1A1A;
-          line-height: 1.35;
-          font-weight: 700;
-        }
-
-        .location {
-          color: #666666;
-          font-size: 0.95rem;
-          margin-bottom: 20px;
-          font-family: var(--font-montserrat), sans-serif;
-          display: flex;
-          align-items: center;
-          gap: 8px;
-        }
-
-        .card-footer {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          border-top: 1px solid #eeeeee;
-          padding-top: 18px;
-          font-family: var(--font-montserrat), sans-serif;
-        }
-        
-        .price {
-          color: #1D1E20;
-          font-weight: 600;
-          font-size: 1rem;
-        }
-        
-        .tickets-link {
-          color: #C5A059;
-          font-weight: 600;
-          text-transform: uppercase;
-          font-size: 0.85rem;
-          letter-spacing: 1px;
-          transition: color 0.3s ease;
-        }
-
-        .tickets-link:hover {
-          color: #a8843a;
-        }
-
-        /* Nav & Footer overrides */
-        .accent-text {
-          color: var(--accent);
-          font-style: italic;
-          text-transform: lowercase;
-          font-size: 0.85em;
-          margin-left: 5px;
-          font-family: var(--font-playfair), serif;
-        }
-
-        /* Reviews Section */
-        .reviews-section {
-          background: #F8F7F4;
-          max-width: 100%;
-          padding: 100px 20px;
-        }
-
-        .reviews-section .reviews-grid {
-          max-width: 1200px;
-          margin: 0 auto;
-        }
-
-        .reviews-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-          gap: 30px;
-        }
-
-        .review-card {
-          padding: 40px 30px;
-          text-align: center;
-          display: flex;
-          flex-direction: column;
-          gap: 18px;
-          background: #FFFFFF;
-          border: none;
-          border-radius: 8px;
-          border-top: 3px solid #C5A059;
-          box-shadow: 0 4px 20px rgba(0,0,0,0.06);
-        }
-
-        .review-stars {
-          color: #C5A059;
-          font-size: 1.4rem;
-          letter-spacing: 3px;
-        }
-
-        .review-text {
-          font-family: var(--font-montserrat), sans-serif;
-          font-style: italic;
-          font-size: 1.15rem;
-          color: #1A1A1A;
-          line-height: 1.8;
-        }
-
-        .review-author {
-          font-family: var(--font-montserrat), sans-serif;
-          font-size: 0.85rem;
-          color: #888888;
-          font-weight: 500;
-          text-transform: uppercase;
-          letter-spacing: 1.5px;
-          margin-top: auto;
-        }
-
-        /* Gallery Section */
-        .gallery-section {
-          background: #FFFFFF;
-          max-width: 100%;
-          padding: 100px 20px;
-        }
-
-
-        .gallery-section .gallery-grid {
-          max-width: 1200px;
-          margin: 0 auto;
-        }
-
-        .gallery-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-          gap: 20px;
-        }
-
-        .gallery-item {
-          height: 320px;
-          background-size: cover;
-          background-position: center;
-          border-radius: 8px;
-          transition: transform 0.5s ease, filter 0.5s ease;
-          filter: none;
-          cursor: pointer;
-          box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-        }
-
-        .gallery-item:hover {
-          transform: scale(1.02);
-          filter: brightness(1.05);
-          box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-        }
-
-        /* Video Section */
-        .video-section {
-          position: relative;
-          width: 100%;
-          min-height: 85vh;
-          overflow: hidden;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          background: #000;
-        }
-
-        .video-bg {
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          min-width: 100%;
-          min-height: 100%;
-          width: auto;
-          height: auto;
-          object-fit: cover;
-          z-index: 0;
-          opacity: 0.7;
-        }
-
-        .video-overlay {
-          position: absolute;
-          inset: 0;
-          background: linear-gradient(
-            to bottom,
-            rgba(0,0,0,0.35) 0%,
-            rgba(0,0,0,0.55) 50%,
-            rgba(0,0,0,0.75) 100%
-          );
-          z-index: 1;
-        }
-
-        .video-content {
-          position: relative;
-          z-index: 2;
-          text-align: center;
-          max-width: 800px;
-          padding: 80px 30px;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 24px;
-        }
-
-        .video-kicker {
-          font-family: var(--font-montserrat), sans-serif;
-          font-size: 0.9rem;
-          font-weight: 600;
-          text-transform: uppercase;
-          letter-spacing: 5px;
-          color: #C5A059;
-        }
-
-        .video-title {
-          font-family: var(--font-playfair), serif;
-          font-size: 3.8rem;
-          font-weight: 700;
-          color: #FFFFFF;
-          line-height: 1.2;
-          letter-spacing: -0.5px;
-          margin: 0;
-          text-shadow: 0 4px 30px rgba(0,0,0,0.5);
-        }
-
-        .video-body {
-          font-family: var(--font-montserrat), sans-serif;
-          font-size: 1.2rem;
-          color: rgba(255,255,255,0.85);
-          line-height: 1.8;
-          font-weight: 400;
-          max-width: 600px;
-        }
-
-        .video-cta {
-          margin-top: 10px;
-        }
-
-        @media (max-width: 768px) {
-          .video-title {
-            font-size: 2.4rem;
-          }
-          .video-body {
-            font-size: 1.05rem;
-          }
-          .video-section {
-            min-height: 70vh;
-          }
-        }
-
-        /* FAQ Section */
-        .faq-section {
-          background: #F8F7F4;
-          max-width: 100%;
-          padding: 100px 20px;
-        }
-        .reviews-section .section-header p,
-        .gallery-section .section-header p,
-        .faq-section .section-header p {
-          color: #4d4b4b;
-        }
-
-        .faq-section .faq-container {
-          max-width: 800px;
-          margin: 0 auto;
-        }
-
-        .faq-container {
-          display: flex;
-          flex-direction: column;
-          gap: 20px;
-        }
-
-        .faq-item {
-          padding: 30px 35px;
-          background: #FFFFFF;
-          border: 1px solid #eeeeee;
-          border-radius: 8px;
-          box-shadow: 0 2px 10px rgba(0,0,0,0.04);
-        }
-
-        .faq-item h3 {
-          font-family: var(--font-playfair), serif;
-          font-size: 1.3rem;
-          margin-bottom: 14px;
-          color: #1A1A1A;
-          font-weight: 700;
-        }
-
-        .faq-item p {
-          color: #4d4b4bff;
-          font-family: var(--font-montserrat), sans-serif;
-          font-weight: 400;
-          font-size: 1.05rem;
-          line-height: 1.8;
-          opacity: 1;
-        }
-
-        /* Footer Section */
-        .footer-section {
-          background: #1a1a1a;
-          margin: 0;
-          padding: 0;
-          width: 100%;
-          max-width: 100%;
-        }
-
-        .footer-logo-area {
-          display: flex;
-          justify-content: center;
-          padding: 60px 20px 40px;
-          border-bottom: 1px solid rgba(197, 160, 89, 0.15);
-        }
-
-        .footer-logo-img {
-          height: 100px;
-          width: auto;
-          object-fit: contain;
-          transition: transform 0.3s ease, opacity 0.3s ease;
-        }
-
-        .footer-logo-img:hover {
-          transform: scale(1.05);
-          opacity: 0.9;
-        }
-
-        .footer-columns {
-          display: flex;
-          justify-content: center;
-          gap: 120px;
-          padding: 60px 40px 80px;
-          flex-wrap: wrap;
-          max-width: 900px;
-          margin: 0 auto;
-        }
-
-        .footer-col {
-          text-align: center;
-        }
-
-        .footer-heading {
-          font-family: var(--font-playfair), serif;
-          font-size: 1rem;
-          font-weight: 700;
-          text-transform: uppercase;
-          letter-spacing: 3px;
-          color: var(--accent);
-          margin-bottom: 25px;
-        }
-
-        .footer-text {
-          font-family: var(--font-montserrat), sans-serif;
-          font-size: 1rem;
-          color: var(--text-secondary);
-          margin-bottom: 8px;
-          font-weight: 400;
-        }
-
-        .social-icons {
-          display: flex;
-          gap: 20px;
-          justify-content: center;
-          align-items: center;
-        }
-
-        .social-icon-link {
-          color: var(--text-secondary);
-          transition: color 0.3s ease, transform 0.3s ease;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          width: 44px;
-          height: 44px;
-          border-radius: 50%;
-          border: 1px solid rgba(255, 255, 255, 0.15);
-        }
-
-        .social-icon-link:hover {
-          color: var(--accent);
-          transform: translateY(-3px);
-          border-color: var(--accent);
-        }
-
-        .footer-bottom-bar {
-          border-top: 1px solid rgba(197, 160, 89, 0.15);
-          text-align: center;
-          padding: 20px;
-        }
-
-        .copyright {
-          font-family: var(--font-montserrat), sans-serif;
-          font-size: 0.85rem;
-          color: rgba(255, 255, 255, 0.5);
-          letter-spacing: 1px;
-        }
-        
-        @media (max-width: 768px) {
-          .hero-title {
-            font-size: 3rem;
-          }
-          .hero-subtitle {
-            font-size: 1.1rem;
-          }
-          .section-header h2 {
-            font-size: 2.2rem;
-          }
-          .featured-section,
-          .reviews-section,
-          .gallery-section,
-          .faq-section {
-            padding: 60px 16px;
-          }
-          .footer-columns {
-            flex-direction: column;
-            gap: 50px;
-            padding: 40px 20px 60px;
-          }
-          .footer-logo-img {
-            height: 70px;
-          }
-        }
-      `}</style>
     </div>
   );
 }

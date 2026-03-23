@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 
 // ─────────────────────────────────────────────
 // DATA — Edit this to customise the page
@@ -50,21 +51,30 @@ function MediaBlock({ src, alt, style = {}, controls = false }) {
     };
     if (isVideo) {
         if (controls) {
-            // Full-featured player: user controls audio/play
             return (
                 <video controls style={{ ...baseStyle, objectFit: 'contain' }}>
                     <source src={src} />
                 </video>
             );
         }
-        // Ambient background video: silent autoplay
         return (
-            <video autoPlay muted loop playsInline style={baseStyle}>
+            <video autoPlay muted loop playsInline preload="none" style={baseStyle}>
                 <source src={src} />
             </video>
         );
     }
-    return <img src={src} alt={alt} style={baseStyle} />;
+    // Usar next/image dentro de un contenedor relativo para `fill`
+    return (
+        <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+            <Image
+                src={src}
+                alt={alt || ''}
+                fill
+                sizes="(max-width: 768px) 100vw, 500px"
+                style={{ objectFit: style.objectFit || 'cover' }}
+            />
+        </div>
+    );
 }
 
 // ─────────────────────────────────────────────
@@ -72,15 +82,18 @@ function MediaBlock({ src, alt, style = {}, controls = false }) {
 // ─────────────────────────────────────────────
 export default function SobreNosotrosPage() {
     return (
-        <div className="animate-fade-in" style={{ paddingBottom: '80px' }}>
+        <div className="animate-fade-in" style={{ paddingBottom: '80px', paddingTop: '120px' }}>
 
             {/* ── HERO ── */}
             <section style={{ position: 'relative', height: '65vh', minHeight: '420px', overflow: 'hidden' }}>
                 {COMPANY.heroImage && (
-                    <img
+                    <Image
                         src={COMPANY.heroImage}
                         alt="Glory Nights"
-                        style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
+                        fill
+                        priority
+                        sizes="100vw"
+                        style={{ objectFit: 'cover' }}
                     />
                 )}
                 <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.82) 100%)' }} />
@@ -167,7 +180,7 @@ export default function SobreNosotrosPage() {
                         {TEAM.map((member) => (
                             <div key={member.name} className="glass-panel" style={{ overflow: 'hidden', borderRadius: '8px' }}>
                                 {/* Photo */}
-                                <div style={{ aspectRatio: '1/1', overflow: 'hidden', background: '#111' }}>
+                                <div style={{ aspectRatio: '1/1', overflow: 'hidden', background: '#111', position: 'relative' }}>
                                     <MediaBlock src={member.imageUrl} alt={member.name} />
                                 </div>
                                 {/* Info */}
