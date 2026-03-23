@@ -18,6 +18,7 @@ import AnimatedButton from './components/AnimatedButton';
 import SocialProof from './components/SocialProof';
 import JsonLd from './components/JsonLd';
 import HeroClient from './components/HeroClient';
+import LinkToMain from './components/LinkToMain';
 import './home.css';
 
 // ── Reseñas de respaldo (se usan si la API no responde) ──
@@ -340,6 +341,7 @@ export default async function Home() {
         </div>
 
         <div className="footer-bottom-bar">
+          <LinkToMain />
           <p className="copyright">&copy; {new Date().getFullYear()} Glory Nights. Todos los derechos reservados.</p>
         </div>
       </footer>
